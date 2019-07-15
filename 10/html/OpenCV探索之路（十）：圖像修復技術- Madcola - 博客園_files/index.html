@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- saved from url=(1545)https://vcdn.adnxs.com/p/creative-html/e1/53/01/57/e1530157-a221-47bc-844a-af33647fa203/index.html?clickTag=https%3A%2F%2Fsin1-ib.adnxs.com%2Fclick%3FeukmMQisfD956SYxCKx8PwAAAIDrUeA_wOyePCzUuj_A7J48LNS6P0a-e_TvYW1AflSKHuhVL0bD-ytdAAAAAD11eAC1AAAAMQcAAAIAAACVh-4JwFgPAAAAAABVU0QAVVNEAEABMgDcAAAAAAABAgUCAAAAAAAAkSRLFQAAAAA.%2Fcpcpm%3DAAAAAAAAAAA%3D%2Fbcr%3DAAAAAAAA8D8%3D%2Fcnd%3D%2521zRF5zAiT1_cOEJWPuk8YwLE9IAAoADEfhetRuB7VPzoJU0lOMTozNTYyQPwOSQAAAAAAAPA_UQAAAAAAAAAAWQAAAAAAAAAAYQAAAAAAAAAAaQAAAAAAAAAAcQAAAAAAAAAA%2Fcca%3DMTg0MSNTSU4xOjM1NjI%3D%2Fbn%3D86497%2Fclickenc%3Dhttps%253A%252F%252Fadclick.g.doubleclick.net%252Faclk%253Fsa%253DL%2526ai%253DCr_DTwfsrXea_C9bAqAGOp4jQBciE_71NyKGP9OYCwI23ARABIABgnwGCARdjYS1wdWItNDIxMDU2OTI0MTUwNDI4OMgBCakC2ktszZlGYT7gAgCoAwGqBOsBT9D-SfAu0mgp-GI1qVTUlqxAd2RV0w6I4lgrueMsZ4vK2_ayO7furlj6EPo9uGCZ_0Tsyaf6YqecDbe04qu9Zd8pmwwFI881O38QRIzAvTlnQZJ2OeyCyvFcjdiJx7MOVRvIUjbnydS9pim1OntgySh3JYqU4zlA8qYPlhYzDMM8kQtkSNROyMAbAPgJNjugGa3GUVJJCWqYjMzsMW8gPK_DELqEklwA4fXZT9uPSpD7koQmLAmZ6xHcyuzM2fsWt82389XrYDBmhM8f5zvBe5yHx5w3sIs_NNwshFnSWbD5-S9EV8nQYFqMceAEAYAGutOi2Muj4MvmAaAGIagHpr4bqAfZyxuoB8_MG9gHANIIBQiAYRAB%2526num%253D1%2526sig%253DAOD64_0HPQMxEk1xnwO9_7YLwLIHtGPM-A%2526client%253Dca-pub-4210569241504288%2526adurl%253Dhttps%25253A%25252F%25252Fwww.ford.com.tw%25252Fsales-promotion%25252Fcrosscarline-rolex-campaign%25252F%25253Fmemo%25253DOLA_retail_crosscarline_SP_GDN_interest_targeting_320x50_M_07retail_os%252526bannerid%25253DOLA_retail_crosscarline_SP_GDN_interest_targeting_320x50_M_07retail_os -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="authoring-tool" content="Adobe_Animate_CC">
+<title>320x50</title>
+<!-- write your code here -->
+<meta name="ad.size" content="width=320,height=50">
+<script src="./createjs_2015.11.26_54e1c3722102182bb133912ad4442e19_min.js.下載"></script>
+<script src="./createjs-2015.11.26.min.js.下載"></script>
+<script src="./320x50.js.下載"></script>
+<script type="text/javascript" src="./appnexus-html5-lib.min.js.下載"></script>
+<script type="text/Javascript">
+var clickTag = "https://www.ford.com.tw/sales-promotion/crosscarline-rolex-campaign/?memo=OLA_retail_crosscarline_SP_GDN_interest_targeting_320x50_M_07retail_os&bannerid=OLA_retail_crosscarline_SP_GDN_interest_targeting_320x50_M_07retail_os"; </script>
+
+<script>
+var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
+function init() {
+	canvas = document.getElementById("canvas");
+	anim_container = document.getElementById("animation_container");
+	dom_overlay_container = document.getElementById("dom_overlay_container");
+	var comp=AdobeAn.getComposition("1B4BAD7B39252944A904A3A383931389");
+	var lib=comp.getLibrary();
+	var loader = new createjs.LoadQueue(false);
+	loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
+	loader.addEventListener("complete", function(evt){handleComplete(evt,comp)});
+	var lib=comp.getLibrary();
+	loader.loadManifest(lib.properties.manifest);
+}
+function handleFileLoad(evt, comp) {
+	var images=comp.getImages();	
+	if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
+}
+function handleComplete(evt,comp) {
+	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+	var lib=comp.getLibrary();
+	var ss=comp.getSpriteSheet();
+	var queue = evt.target;
+	var ssMetadata = lib.ssMetadata;
+	for(i=0; i<ssMetadata.length; i++) {
+		ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+	}
+	exportRoot = new lib._320x50();
+	stage = new lib.Stage(canvas);	
+	//Registers the "tick" event listener.
+	fnStartAnimation = function() {
+		stage.addChild(exportRoot);
+		createjs.Ticker.setFPS(lib.properties.fps);
+		createjs.Ticker.addEventListener("tick", stage);
+	}	    
+	//Code to support hidpi screens and responsive scaling.
+	function makeResponsive(isResp, respDim, isScale, scaleType) {		
+		var lastW, lastH, lastS=1;		
+		window.addEventListener('resize', resizeCanvas);		
+		resizeCanvas();		
+		function resizeCanvas() {			
+			var w = lib.properties.width, h = lib.properties.height;			
+			var iw = window.innerWidth, ih=window.innerHeight;			
+			var pRatio = window.devicePixelRatio || 1, xRatio=iw/w, yRatio=ih/h, sRatio=1;			
+			if(isResp) {                
+				if((respDim=='width'&&lastW==iw) || (respDim=='height'&&lastH==ih)) {                    
+					sRatio = lastS;                
+				}				
+				else if(!isScale) {					
+					if(iw<w || ih<h)						
+						sRatio = Math.min(xRatio, yRatio);				
+				}				
+				else if(scaleType==1) {					
+					sRatio = Math.min(xRatio, yRatio);				
+				}				
+				else if(scaleType==2) {					
+					sRatio = Math.max(xRatio, yRatio);				
+				}			
+			}			
+			canvas.width = w*pRatio*sRatio;			
+			canvas.height = h*pRatio*sRatio;
+			canvas.style.width = dom_overlay_container.style.width = anim_container.style.width =  w*sRatio+'px';				
+			canvas.style.height = anim_container.style.height = dom_overlay_container.style.height = h*sRatio+'px';
+			stage.scaleX = pRatio*sRatio;			
+			stage.scaleY = pRatio*sRatio;			
+			lastW = iw; lastH = ih; lastS = sRatio;            
+			stage.tickOnUpdate = false;            
+			stage.update();            
+			stage.tickOnUpdate = true;		
+		}
+	}
+	makeResponsive(false,'both',false,1);	
+	AdobeAn.compositionLoaded(lib.properties.id);
+	fnStartAnimation();
+}
+</script>
+<!-- write your code here -->
+</head>
+<body onload="init();" style="margin:0px;" marginwidth="0" marginheight="0">
+	<div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00); width:320px; height:50px">
+      <a href="javascript:void(0)" onclick="window.open(APPNEXUS.getClickTag(), &#39;_blank&#39;);">
+		<canvas id="canvas" width="320" height="50" style="position: absolute; display: block; background-color: rgb(255, 255, 255); width: 320px; height: 50px;"></canvas>
+        </a>
+		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:320px; height:50px; position: absolute; left: 0px; top: 0px; display: block;">
+		</div>
+	</div>
+
+</body></html>

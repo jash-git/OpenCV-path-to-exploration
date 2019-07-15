@@ -39,7 +39,7 @@
 	Opencv探索之路（十九）：讀寫xml和yml文件
 		-https://www.cnblogs.com/skyfsm/p/7182313.html
 	
-	OpenCV探索之路（十八）：使用imwrite調整保存的圖片質量
+	OpenCV探索之路（十八）：使用imwrite調整保存的圖片質量 (破壞性影像壓縮)
 		-https://www.cnblogs.com/skyfsm/p/7136709.html
 		
 	OpenCV探索之路（十七）：Mat和IplImage訪問像素的方法總結
@@ -64,5 +64,24 @@
 		
 	OpenCV探索之路（十一）：輪廓查找和多邊形包圍輪廓
 		-https://www.cnblogs.com/skyfsm/p/6890863.html
+	
+	OpenCV探索之路（十）：圖像修復技術
+		-https://www.cnblogs.com/skyfsm/p/6888213.html
+	
+	OpenCV探索之路（九）：模板匹配
+		-https://www.cnblogs.com/skyfsm/p/6884253.html
+		
+	OpenCV探索之路（八）：重映射與仿射變換 (圖片坐標軸改變/圖片旋轉)
+		-https://www.cnblogs.com/skyfsm/p/6882853.html
+		
+	OpenCV探索之路（七）：霍夫變換 (偵測 直線/圓形)
+		-https://www.cnblogs.com/skyfsm/p/6881686.html
+	
+	OpenCV探索之路（六）：邊緣檢測（canny、sobel、laplacian）
+		-https://www.cnblogs.com/skyfsm/p/6879265.html
+	
+	OpenCV探索之路（五）：圖片縮放和圖像金字塔
+		-https://www.cnblogs.com/skyfsm/p/6876732.html
+	
 	
 	
