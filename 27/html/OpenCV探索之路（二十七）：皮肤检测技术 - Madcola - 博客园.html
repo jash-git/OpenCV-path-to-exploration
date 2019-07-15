@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)https://www.cnblogs.com/skyfsm/p/7868877.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园</title>
+    <meta property="og:description" content="好久没写博客了，因为最近都忙着赶项目和打比赛==| 好吧，今天我打算写一篇关于使用opencv做皮肤检测的技术总结。那首先列一些现在主流的皮肤检测的方法都有哪些： 1. RGB color space">
+    <link type="text/css" rel="stylesheet" href="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/bundle-SimpleMemory.css">
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/bundle-SimpleMemory-mobile.css">
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/skyfsm/rss">
+    <link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/skyfsm/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/skyfsm/wlwmanifest.xml">
+    <script src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/osd.js.下載"></script><script src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/pubads_impl_rendering_2019070801.js.下載"></script><script async="" src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/analytics.js.下載"></script><script src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/jquery-2.2.0.min.js.下載"></script>
+    <script>var currentBlogId=327280;var currentBlogApp='skyfsm',cb_enable_mathjax=true;var isLogined=false;</script>
+    <script type="text/x-mathjax-config;executed=true">
+    MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processClass: 'math', processEscapes: true },
+        TeX: { 
+            equationNumbers: { autoNumber: ['AMS'], useLabelIds: true }, 
+            extensions: ['extpfeil.js'],
+            Macros: {bm: "\\boldsymbol"}
+        },
+        'HTML-CSS': { linebreaks: { automatic: true } },
+        SVG: { linebreaks: { automatic: true } }
+        });
+    </script><script src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/MathJax.js.下載"></script>
+<script src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/blog-common.js.下載" type="text/javascript"></script>
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><link rel="preload" href="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/f(4).txt" as="script"><script type="text/javascript" src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/f(4).txt"></script><link rel="preload" href="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/f(5).txt" as="script"><script type="text/javascript" src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/f(5).txt"></script><script src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/pubads_impl_2019070801.js.下載" async=""></script><script src="chrome-extension://jhffgcfmcckgmioipfnmbannkpncfipo/util.js"></script><script src="chrome-extension://jhffgcfmcckgmioipfnmbannkpncfipo/pagejs.js"></script><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><link rel="prefetch" href="https://tpc.googlesyndication.com/safeframe/1-0-35/html/container.html"></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<a name="top"></a>
+
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="https://www.cnblogs.com/skyfsm/"><img id="blogLogo" src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/skyfsm/">冠军的试炼</a></h1>
+<h2>悟已往之不谏，知来者之可追</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/skyfsm/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/Madcola">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="https://www.cnblogs.com/skyfsm/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="https://www.cnblogs.com/skyfsm/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 69&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 793</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+        <div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/skyfsm/p/7868877.html">OpenCV探索之路（二十七）：皮肤检测技术</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown"><p>好久没写博客了，因为最近都忙着赶项目和打比赛==| 好吧，今天我打算写一篇关于使用opencv做皮肤检测的技术总结。那首先列一些现在主流的皮肤检测的方法都有哪些：</p>
+<ol>
+<li>RGB color space</li>
+<li>Ycrcb之cr分量+otsu阈值化</li>
+<li>YCrCb中133&lt;=Cr&lt;=173 77&lt;=Cb&lt;=127</li>
+<li>HSV中 7&lt;H&lt;20 28&lt;S&lt;256 50&lt;V&lt;256</li>
+<li>基于椭圆皮肤模型的皮肤检测</li>
+<li>opencv自带肤色检测类AdaptiveSkinDetector</li>
+</ol>
+<p>那我们今天就来一一实现它吧！</p>
+<h2 id="方法一基于rgb的皮肤检测">方法一：基于RGB的皮肤检测</h2>
+<p>根据RGB颜色模型找出定义好的肤色范围内的像素点，范围外的像素点设为黑色。</p>
+<p>查阅资料后可以知道，前人做了大量研究，肤色在RGB模型下的范围基本满足以下约束：</p>
+<p>在均匀光照下应满足以下判别式：</p>
+<p><strong>R&gt;95 AND G&gt;40 B&gt;20 AND MAX(R,G,B)-MIN(R,G,B)&gt;15 AND ABS(R-G)&gt;15 AND R&gt;G AND R&gt;B</strong></p>
+<p>在侧光拍摄环境下：</p>
+<p><strong>R&gt;220 AND G&gt;210 AND B&gt;170 AND ABS(R-G)&lt;=15 AND R&gt;B AND G&gt;B</strong></p>
+<p>既然判别式已经确定了，所以按照判别式写程序就很简单了。</p>
+<pre><code class="hljs accesslog">/*基于RGB范围的皮肤检测*/
+Mat RGB_detect(Mat&amp; img)
+{
+    /*
+        R&gt;<span class="hljs-number">95</span> AND G&gt;<span class="hljs-number">40</span> B&gt;<span class="hljs-number">20</span> AND MAX(R,G,B)-MIN(R,G,B)&gt;<span class="hljs-number">15</span> AND ABS(R-G)&gt;<span class="hljs-number">15</span> AND R&gt;G AND R&gt;B
+            OR
+        R&gt;<span class="hljs-number">220</span> AND G&gt;<span class="hljs-number">210</span> AND B&gt;<span class="hljs-number">170</span> AND ABS(R-G)&lt;=<span class="hljs-number">15</span> AND R&gt;B AND G&gt;B
+    */
+    Mat detect = img.clone();
+    detect.setTo(<span class="hljs-number">0</span>);
+    if (img.empty() || img.channels() != <span class="hljs-number">3</span>)
+    {
+        return detect;
+    }
+
+    for (int i = <span class="hljs-number">0</span>; i &lt; img.rows; i++)
+    {
+        for (int j = <span class="hljs-number">0</span>; j &lt; img.cols; j++)
+        {
+            uchar *p_detect = detect.ptr&lt;uchar&gt;(i, j);
+            uchar *p_img = img.ptr&lt;uchar&gt;(i, j);
+            if ((p_img<span class="hljs-string">[2]</span> &gt; <span class="hljs-number">95</span> &amp;&amp; p_img<span class="hljs-string">[1]</span>&gt;<span class="hljs-number">40</span> &amp;&amp; p_img<span class="hljs-string">[0]</span> &gt; <span class="hljs-number">20</span> &amp;&amp;
+                (MAX(p_img<span class="hljs-string">[0]</span>, MAX(p_img<span class="hljs-string">[1]</span>, p_img<span class="hljs-string">[2]</span>)) - MIN(p_img<span class="hljs-string">[0]</span>, MIN(p_img<span class="hljs-string">[1]</span>, p_img<span class="hljs-string">[2]</span>)) &gt; <span class="hljs-number">15</span>) &amp;&amp;
+                abs(p_img<span class="hljs-string">[2]</span> - p_img<span class="hljs-string">[1]</span>) &gt; <span class="hljs-number">15</span> &amp;&amp; p_img<span class="hljs-string">[2]</span> &gt; p_img<span class="hljs-string">[1]</span> &amp;&amp; p_img<span class="hljs-string">[1]</span> &gt; p_img<span class="hljs-string">[0]</span>) ||
+                (p_img<span class="hljs-string">[2]</span> &gt; <span class="hljs-number">200</span> &amp;&amp; p_img<span class="hljs-string">[1]</span> &gt; <span class="hljs-number">210</span> &amp;&amp; p_img<span class="hljs-string">[0]</span> &gt; <span class="hljs-number">170</span> &amp;&amp; abs(p_img<span class="hljs-string">[2]</span> - p_img<span class="hljs-string">[1]</span>) &lt;= <span class="hljs-number">15</span> &amp;&amp;
+                p_img<span class="hljs-string">[2]</span> &gt; p_img<span class="hljs-string">[0]</span> &amp;&amp;  p_img<span class="hljs-string">[1]</span> &gt; p_img<span class="hljs-string">[0]</span>))
+            {
+                p_detect<span class="hljs-string">[0]</span> = p_img<span class="hljs-string">[0]</span>;
+                p_detect<span class="hljs-string">[1]</span> = p_img<span class="hljs-string">[1]</span>;
+                p_detect<span class="hljs-string">[2]</span> = p_img<span class="hljs-string">[2]</span>;
+            }
+
+         
+        }
+
+    }
+    return detect;
+}</code></pre>
+<p>检测效果如下：</p>
+<p><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/1093303-20171120233942118-982022546.png"></p>
+<p>从检测结果可以看出，皮肤的检测效果并不好，首先皮肤检测的完整性并不高，一些稍微光线不好的区域也没法检测出皮肤来。第二，这种基于RBG范围来判定皮肤的算法太受光线的影响了，鲁棒性确实不好。</p>
+<h2 id="方法二基于椭圆皮肤模型的皮肤检测">方法二：基于椭圆皮肤模型的皮肤检测</h2>
+<p>经过前人学者大量的皮肤统计信息可以知道，如果将皮肤信息映射到YCrCb空间，则在CrCb二维空间中这些皮肤像素点近似成一个椭圆分布。因此如果我们得到了一个CrCb的椭圆，下次来一个坐标(Cr, Cb)我们只需判断它是否在椭圆内（包括边界），如果是，则可以判断其为皮肤，否则就是非皮肤像素点。</p>
+<pre><code class="hljs groovy"><span class="hljs-comment">/*基于椭圆皮肤模型的皮肤检测*/</span>
+Mat ellipse_detect(Mat&amp; src)
+{
+    Mat img = src.clone();
+    Mat skinCrCbHist = <span class="hljs-string">Mat:</span>:zeros(Size(<span class="hljs-number">256</span>, <span class="hljs-number">256</span>), CV_8UC1);
+    <span class="hljs-comment">//利用opencv自带的椭圆生成函数先生成一个肤色椭圆模型</span>
+    ellipse(skinCrCbHist, Point(<span class="hljs-number">113</span>, <span class="hljs-number">155.6</span>), Size(<span class="hljs-number">23.4</span>, <span class="hljs-number">15.2</span>), <span class="hljs-number">43.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">360.0</span>, Scalar(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>), <span class="hljs-number">-1</span>);
+    Mat ycrcb_image;
+    Mat output_mask = <span class="hljs-string">Mat:</span>:zeros(img.size(), CV_8UC1);
+    cvtColor(img, ycrcb_image, CV_BGR2YCrCb); <span class="hljs-comment">//首先转换成到YCrCb空间</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; img.cols; i++)   <span class="hljs-comment">//利用椭圆皮肤模型进行皮肤检测</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; img.rows; j++) 
+        {
+            Vec3b ycrcb = ycrcb_image.at&lt;Vec3b&gt;(j, i);
+            <span class="hljs-keyword">if</span> (skinCrCbHist.at&lt;uchar&gt;(ycrcb[<span class="hljs-number">1</span>], ycrcb[<span class="hljs-number">2</span>]) &gt; <span class="hljs-number">0</span>)   <span class="hljs-comment">//如果该落在皮肤模型椭圆区域内，该点就是皮肤像素点</span>
+                output_mask.at&lt;uchar&gt;(j, i) = <span class="hljs-number">255</span>;
+        }
+
+    Mat detect;
+    img.copyTo(detect,output_mask);  <span class="hljs-comment">//返回肤色图</span>
+    <span class="hljs-keyword">return</span> detect;
+}</code></pre>
+<p>检测效果:</p>
+<p><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/1093303-20171120233959774-87672850.png"></p>
+<p>这种基于肤色椭圆模型的算法的皮肤检测较上面算法在效果上有着较大的提升，基本上改检测的皮肤都检测到了，对光线的抗干扰能力也是比较强的，检测出来的图像都比较干净，背景杂质较少。</p>
+<h2 id="法三ycrcb颜色空间cr分量otsu法阈值分割">法三：YCrCb颜色空间Cr分量+Otsu法阈值分割</h2>
+<p>这里先简单介绍YCrCb颜色空间。<br>
+YCrCb即YUV，其中“Y”表示明亮度（Luminance或Luma），也就是灰阶值；而“U”和“V” 表示的则是色度（Chrominance或Chroma），作用是描述影像色彩及饱和度，用于指定像素的颜色。“亮度”是透过RGB输入信号来建立的，方法是将RGB信号的特定部分叠加到一起。“色度”则定义了颜色的两个方面─色调与饱和度，分别用Cr和Cb来表示。其中，Cr反映了RGB输入信号红色部分与RGB信号亮度值之间的差异。而Cb反映的是RGB输入信号蓝色部分与RGB信号亮度值之间的差异。</p>
+<p>该方法的原理也很简单：</p>
+<p>a.将RGB图像转换到YCrCb颜色空间，提取Cr分量图像</p>
+<p>b.对Cr做自二值化阈值分割处理（Otsu法）</p>
+<pre><code class="hljs cpp"><span class="hljs-comment">/*YCrCb颜色空间Cr分量+Otsu法*/</span>
+<span class="hljs-function">Mat <span class="hljs-title">YCrCb_Otsu_detect</span><span class="hljs-params">(Mat&amp; src)</span>
+</span>{
+    Mat ycrcb_image;
+    cvtColor(src, ycrcb_image, CV_BGR2YCrCb); <span class="hljs-comment">//首先转换成到YCrCb空间</span>
+    Mat detect;
+    <span class="hljs-built_in">vector</span>&lt;Mat&gt; channels;
+    split(ycrcb_image, channels);
+    Mat output_mask = channels[<span class="hljs-number">1</span>];
+    threshold(output_mask, output_mask, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>, CV_THRESH_BINARY | CV_THRESH_OTSU);
+    src.copyTo(detect, output_mask);
+    <span class="hljs-keyword">return</span> detect;
+
+}</code></pre>
+<p>检测效果：</p>
+<p><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/1093303-20171120234013946-198828174.png"></p>
+<h2 id="法四基于ycrcb颜色空间crcb范围筛选法">法四：基于YCrCb颜色空间Cr,Cb范围筛选法</h2>
+<p>这个方法跟法一其实大同小异，只是颜色空间不同而已。据资料显示，正常黄种人的Cr分量大约在133至173之间，Cb分量大约在77至127之间。大家可以根据自己项目需求放大或缩小这两个分量的范围，会有不同的效果。</p>
+<pre><code class="hljs groovy"><span class="hljs-comment">/*YCrCb颜色空间Cr,Cb范围筛选法*/</span>
+Mat YCrCb_detect(Mat &amp; src)
+{
+    Mat ycrcb_image;
+    <span class="hljs-keyword">int</span> Cr = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">int</span> Cb = <span class="hljs-number">2</span>;
+    cvtColor(src, ycrcb_image, CV_BGR2YCrCb); <span class="hljs-comment">//首先转换成到YCrCb空间</span>
+    Mat output_mask = <span class="hljs-string">Mat:</span>:zeros(src.size(), CV_8UC1);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; src.rows; i++)
+    {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; src.cols; j++)
+        {
+            uchar *p_mask = output_mask.ptr&lt;uchar&gt;(i, j);
+            uchar *p_src = ycrcb_image.ptr&lt;uchar&gt;(i, j);
+            <span class="hljs-keyword">if</span> (p_src[Cr] &gt;= <span class="hljs-number">133</span> &amp;&amp; p_src[Cr] &lt;= <span class="hljs-number">173</span> &amp;&amp; p_src[Cb] &gt;= <span class="hljs-number">77</span> &amp;&amp; p_src[Cb] &lt;= <span class="hljs-number">127</span>)
+            {
+                p_mask[<span class="hljs-number">0</span>] = <span class="hljs-number">255</span>;
+            }
+        }
+    }
+    Mat detect;
+    src.copyTo(detect, output_mask);;
+    <span class="hljs-keyword">return</span> detect;
+
+}</code></pre>
+<p>检测效果：</p>
+<p><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/1093303-20171120234028649-1241212737.png"></p>
+<h2 id="法五hsv颜色空间h范围筛选法">法五：HSV颜色空间H范围筛选法</h2>
+<p>同样地，也是在不同的颜色空间下采取相应的颜色范围将皮肤分割出来。</p>
+<pre><code class="hljs groovy"><span class="hljs-comment">/*HSV颜色空间H范围筛选法*/</span>
+Mat HSV_detector(Mat&amp; src)
+{
+    Mat hsv_image;
+    <span class="hljs-keyword">int</span> h = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">int</span> s = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">int</span> v = <span class="hljs-number">2</span>;
+    cvtColor(src, hsv_image, CV_BGR2HSV); <span class="hljs-comment">//首先转换成到YCrCb空间</span>
+    Mat output_mask = <span class="hljs-string">Mat:</span>:zeros(src.size(), CV_8UC1);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; src.rows; i++)
+    {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; src.cols; j++)
+        {
+            uchar *p_mask = output_mask.ptr&lt;uchar&gt;(i, j);
+            uchar *p_src = hsv_image.ptr&lt;uchar&gt;(i, j);
+            <span class="hljs-keyword">if</span> (p_src[h] &gt;= <span class="hljs-number">0</span> &amp;&amp; p_src[h] &lt;= <span class="hljs-number">20</span> &amp;&amp; p_src[s] &gt;=<span class="hljs-number">48</span> &amp;&amp; p_src[v] &gt;=<span class="hljs-number">50</span>)
+            {
+                p_mask[<span class="hljs-number">0</span>] = <span class="hljs-number">255</span>;
+            }
+        }
+    }
+    Mat detect;
+    src.copyTo(detect, output_mask);;
+    <span class="hljs-keyword">return</span> detect;
+}</code></pre>
+<p>检测效果：</p>
+<p><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/1093303-20171120234042305-567562683.png"></p>
+<h2 id="法六opencv自带肤色检测类adaptiveskindetector">法六：opencv自带肤色检测类AdaptiveSkinDetector</h2>
+<p>opencv提供了下面这个好用的皮肤检测函数：</p>
+<p>CvAdaptiveSkinDetector(int samplingDivider = 1, int morphingMethod = MORPHING_METHOD_NONE);</p>
+<p>这个函数的第二个参数表示皮肤检测过程时所采用的图形学操作方式，其取值有3种可能：</p>
+<ul>
+<li>如果为MORPHING_METHOD_ERODE，则表示只进行一次腐蚀操作；</li>
+<li>如果为MORPHING_METHOD_ERODE_ERODE，则表示连续进行2次腐蚀操作；</li>
+<li>如果为MORPHING_METHOD_ERODE_DILATE，则表示先进行一次腐蚀操作，后进行一次膨胀操作。</li>
+</ul>
+<pre><code class="hljs java"><span class="hljs-comment">/*opencv自带肤色检测类AdaptiveSkinDetector*/</span>
+<span class="hljs-function">Mat <span class="hljs-title">AdaptiveSkinDetector_detect</span><span class="hljs-params">(Mat&amp; src)</span>
+</span>{
+    IplImage *frame;
+    frame = &amp;IplImage(src);  <span class="hljs-comment">//Mat -&gt; IplImage</span>
+    <span class="hljs-function">CvAdaptiveSkinDetector <span class="hljs-title">filter</span><span class="hljs-params">(<span class="hljs-number">1</span>, CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE_DILATE)</span></span>;
+
+    IplImage *maskImg = cvCreateImage(cvSize(src.cols, src.rows), IPL_DEPTH_8U, <span class="hljs-number">1</span>);
+    IplImage *skinImg = cvCreateImage(cvSize(src.cols, src.rows), IPL_DEPTH_8U, <span class="hljs-number">3</span>);
+    cvZero(skinImg);
+    filter.process(frame, maskImg);    <span class="hljs-comment">// process the frame</span>
+    cvCopy(frame, skinImg, maskImg);
+    <span class="hljs-function">Mat <span class="hljs-title">tmp</span><span class="hljs-params">(skinImg)</span></span>;  <span class="hljs-comment">//IplImage -&gt; Mat</span>
+    Mat detect = tmp.clone();
+    cvReleaseImage(&amp;skinImg);
+    cvReleaseImage(&amp;maskImg);
+    <span class="hljs-keyword">return</span> detect;
+}</code></pre>
+<p><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/1093303-20171120234056680-639032421.png"></p>
+<p>从效果图看来，背景多了很多白色的杂质，单从直观效果来看，貌似还不如我上面写的几个算法，难道跟场景有关系？当然，opencv自带的这个api在皮肤检测上确实相当不错的。</p>
+<h2 id="总结">总结</h2>
+<p>今天花了将近7个小时才撸了这篇文章出来==！这篇文章对各大主流的皮肤检测算法做了个总结和实现。其实说白了，每个算法的思想都是大同小异的，都是根据总结出来的一些经验，设定皮肤颜色的范围，再将其过滤出来，不同的只是过滤的过程在不同的颜色空间下进行而已。我们可以根据自己的应用场景，适当地修改这些范围，以获得满意的结果。可以改善的方向就是，我们可以用合适的滤波器或者形态学处理一些噪声，来使得提取出来的皮肤更为干净。</p>
+<p>完整代码可以访问<a href="https://github.com/AstarLight/skin-detector">我的github</a>来获取~</p>
+</div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="https://www.cnblogs.com/skyfsm/category/1000207.html" target="_blank">opencv探索</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(7868877,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/skyfsm/" target="_blank"><img src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/20170109193150.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/skyfsm/">Madcola</a><br>
+            <a href="https://home.cnblogs.com/u/skyfsm/followees">关注 - 30</a><br>
+            <a href="https://home.cnblogs.com/u/skyfsm/followers">粉丝 - 1290</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(7868877,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">11</span>
+    </div>
+    <div class="buryit" onclick="votePost(7868877,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="https://www.cnblogs.com/skyfsm/p/7767043.html" class="p_n_p_prefix">« </a> 上一篇：<a href="https://www.cnblogs.com/skyfsm/p/7767043.html" title="发布于2017-11-01 16:13">直方图均衡化C++实现</a><br><a href="https://www.cnblogs.com/skyfsm/p/7923015.html" class="p_n_p_prefix">» </a> 下一篇：<a href="https://www.cnblogs.com/skyfsm/p/7923015.html" title="发布于2017-11-29 22:12">【OCR技术系列之一】字符识别技术总览</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2017-11-20 23:45</span> <a href="https://www.cnblogs.com/skyfsm/">Madcola</a> 阅读(<span id="post_view_count">13386</span>) 评论(<span id="post_comment_count">2</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=7868877" rel="nofollow">编辑</a> <a href="https://www.cnblogs.com/skyfsm/p/7868877.html#" onclick="AddToWz(7868877);return false;">收藏</a></div>
+	</div>
+	<script src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/highlight.min.js.下載"></script><script>markdown_highlight();</script><script type="text/javascript">var allowComments=true,cb_blogId=327280,cb_entryId=7868877,cb_blogApp=currentBlogApp,cb_blogUserGuid='0615e00a-49d6-e611-845c-ac853d9f53ac',cb_entryCreatedDate='2017/11/20 23:45:00';loadViewCount(cb_entryId);var cb_postType=1;var isMarkdown=true;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<br>
+<div class="feedback_area_title">评论列表</div>
+<div class="feedbackNoItems"></div>	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7868877.html#3846012" class="layer">#1楼</a><a name="3846012" id="comment_anchor_3846012"></a>  <span class="comment_date">2017-11-21 09:09</span> <a id="a_comment_author_3846012" href="https://www.cnblogs.com/cq-jiang/" target="_blank">喝着啤酒写bug</a> <a href="http://msg.cnblogs.com/send/%E5%96%9D%E7%9D%80%E5%95%A4%E9%85%92%E5%86%99bug" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3846012" class="blog_comment_body">虽然不是android 的，但还是不错。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3846012,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3846012,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3846012_avatar" style="display:none;">http://pic.cnblogs.com/face/1128579/20171007180300.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7868877.html#3977599" class="layer">#2楼</a><a name="3977599" id="comment_anchor_3977599"></a><span id="comment-maxId" style="display:none;">3977599</span><span id="comment-maxDate" style="display:none;">2018/5/18 22:25:04</span>  <span class="comment_date">2018-05-18 22:25</span> <a id="a_comment_author_3977599" href="http://home.cnblogs.com/u/1122342/" target="_blank">Chris_Chou</a> <a href="http://msg.cnblogs.com/send/Chris_Chou" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3977599" class="blog_comment_body">楼主说的前人的资料文献能贴一下吗，要写论文了需要引用。多谢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3977599,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3977599,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/skyfsm/p/7868877.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/skyfsm/p/7868877.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-工控&#39;)">【推荐】超50万C++/C#源码: 大型实时仿真组态图形源码</a><br><a href="https://www.grapecity.com.cn/developer/spreadjs?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=SpreadJS&amp;utm_campaign=community" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-SpreadJS&#39;)">【前端】SpreadJS表格控件，可嵌入系统开发的在线Excel</a><br><a href="https://gitee.com/enterprises?from=bky-1" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-gitee&#39;)">【推荐】码云企业版，高效的企业级软件协作开发管理平台</a><br><a href="https://q.cnblogs.com/" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-博问&#39;)">【推荐】程序员问答平台，解决您开发中遇到的技术难题</a><br></div>
+<div id="opt_under_post"></div>
+<script async="async" src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/gpt.js.下載"></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+<script>
+  googletag.cmd.push(function() {
+        googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1546353474406-0').addService(googletag.pubads());
+        googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+  });
+</script>
+<div id="cnblogs_c1" class="c_ad_block">
+    <div id="div-gpt-ad-1546353474406-0" style="height:250px; width:300px;" data-google-query-id="CNj_37HyteMCFVjRlgodB8sFdg"><div id="google_ads_iframe_/1090369/C1_0__container__" style="border: 0pt none; display: inline-block; width: 300px; height: 250px;"><iframe frameborder="0" src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/container.html" id="google_ads_iframe_/1090369/C1_0" title="3rd party ad content" name="" scrolling="no" marginwidth="0" marginheight="0" width="300" height="250" data-is-safeframe="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" data-google-container-id="1" style="border: 0px; vertical-align: bottom;" data-load-complete="true"></iframe></div></div>
+</div>
+<div id="under_post_news"><div class="recomm-block"><b>相关博文：</b><br>·  <a href="https://www.cnblogs.com/leaftime/p/3338874.html" target="_blank" onclick="clickRecomItmem(3338874)">RGB与YCbCr颜色空间的转换</a><br>·  <a href="https://www.cnblogs.com/GeekHuman/p/9938906.html" target="_blank" onclick="clickRecomItmem(9938906)">OpenCV颜色转换和皮肤检测</a><br>·  <a href="https://www.cnblogs.com/skyfsm/p/7401523.html" target="_blank" onclick="clickRecomItmem(7401523)">OpenCV探索之路（二十三）：特征检测和特征匹配方法汇总</a><br>·  <a href="https://www.cnblogs.com/leven20061001/archive/2012/09/26/2703670.html" target="_blank" onclick="clickRecomItmem(2703670)">OpenCV常见的几种背景消除的方法</a><br>·  <a href="https://www.cnblogs.com/xinxue/p/5348743.html" target="_blank" onclick="clickRecomItmem(5348743)">OpenCV 之 边缘检测</a><br></div></div>
+<div id="cnblogs_c2" class="c_ad_block">
+    <div id="div-gpt-ad-1539008685004-0" style="height:60px; width:468px;" data-google-query-id="CNn_37HyteMCFVjRlgodB8sFdg"><div id="google_ads_iframe_/1090369/C2_0__container__" style="border: 0pt none; display: inline-block; width: 320px; height: 50px;"><iframe frameborder="0" src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/container(1).html" id="google_ads_iframe_/1090369/C2_0" title="3rd party ad content" name="" scrolling="no" marginwidth="0" marginheight="0" width="320" height="50" data-is-safeframe="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" data-google-container-id="2" style="border: 0px; vertical-align: bottom;" data-load-complete="true"></iframe></div></div>
+</div>
+<div id="under_post_kb"><div class="itnews c_ad_block"><b>最新新闻</b>：<br> ·  <a href="https://news.cnblogs.com/n/628244/" target="_blank">5G与物联网的“床单革命”</a><br> ·  <a href="https://news.cnblogs.com/n/628243/" target="_blank">祸不单行！被罚款50亿美元后，Facebook还有一大波麻烦</a><br> ·  <a href="https://news.cnblogs.com/n/628242/" target="_blank">NASA警告：我们或将在有生之年目睹小行星撞击地球</a><br> ·  <a href="https://news.cnblogs.com/n/628241/" target="_blank">英特尔修复了两个新安全漏洞</a><br> ·  <a href="https://news.cnblogs.com/n/628240/" target="_blank">俄成功发射“光谱-RG”太空望远镜</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+ if(enablePostBottom()) {
+    codeHighlight();
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverT2();
+    deliverC1();
+    deliverC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);  
+}
+</script>
+</div>
+
+    
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div id="profile_block">昵称：<a href="https://home.cnblogs.com/u/skyfsm/">Madcola</a><br>园龄：<a href="https://home.cnblogs.com/u/skyfsm/" title="入园时间：2017-01-09">2年6个月</a><br>粉丝：<a href="https://home.cnblogs.com/u/skyfsm/followers/">1290</a><br>关注：<a href="https://home.cnblogs.com/u/skyfsm/followees/">30</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;)">+加关注</a></div><script>getFollowStatus('0615e00a-49d6-e611-845c-ac853d9f53ac')</script></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2019/06/01&#39;);return false;">&lt;</a></td><td align="center">2019年7月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2019/08/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">30</td><td align="center">1</td><td align="center">2</td><td align="center">3</td><td align="center">4</td><td align="center">5</td><td class="CalWeekendDay" align="center">6</td></tr><tr><td class="CalWeekendDay" align="center">7</td><td align="center">8</td><td align="center">9</td><td align="center">10</td><td align="center">11</td><td align="center">12</td><td class="CalWeekendDay" align="center">13</td></tr><tr><td class="CalWeekendDay" align="center">14</td><td class="CalTodayDay" align="center">15</td><td align="center">16</td><td align="center">17</td><td align="center">18</td><td align="center">19</td><td class="CalWeekendDay" align="center">20</td></tr><tr><td class="CalWeekendDay" align="center">21</td><td align="center">22</td><td align="center">23</td><td align="center">24</td><td align="center">25</td><td align="center">26</td><td class="CalWeekendDay" align="center">27</td></tr><tr><td class="CalWeekendDay" align="center">28</td><td align="center">29</td><td align="center">30</td><td align="center">31</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td></tr><tr><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td><td class="CalOtherMonthDay" align="center">8</td><td class="CalOtherMonthDay" align="center">9</td><td class="CalOtherMonthDay" align="center">10</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="https://www.cnblogs.com/skyfsm/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="https://www.cnblogs.com/skyfsm/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="https://www.cnblogs.com/skyfsm/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="https://www.cnblogs.com/skyfsm/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="https://www.cnblogs.com/skyfsm/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block"></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(69)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="https://www.cnblogs.com/skyfsm/category/1012247.html">C++(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="https://www.cnblogs.com/skyfsm/category/1304109.html">CUDA(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="https://www.cnblogs.com/skyfsm/category/935270.html">Linux编程(12)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="https://www.cnblogs.com/skyfsm/category/1123384.html">OCR系列(8)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="https://www.cnblogs.com/skyfsm/category/1000207.html">opencv探索(28)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="https://www.cnblogs.com/skyfsm/category/1074227.html">STL(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="https://www.cnblogs.com/skyfsm/category/935280.html">波折岁月(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="https://www.cnblogs.com/skyfsm/category/1309644.html">工具技巧(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="https://www.cnblogs.com/skyfsm/category/993807.html">机器学习之旅(5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="https://www.cnblogs.com/skyfsm/category/1164360.html">深度学习(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="https://www.cnblogs.com/skyfsm/category/1085234.html">数字图像处理(3)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(69)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="https://www.cnblogs.com/skyfsm/archive/2019/02.html">2019年2月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="https://www.cnblogs.com/skyfsm/archive/2019/01.html">2019年1月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="https://www.cnblogs.com/skyfsm/archive/2018/12.html">2018年12月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="https://www.cnblogs.com/skyfsm/archive/2018/10.html">2018年10月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="https://www.cnblogs.com/skyfsm/archive/2018/09.html">2018年9月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="https://www.cnblogs.com/skyfsm/archive/2018/05.html">2018年5月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="https://www.cnblogs.com/skyfsm/archive/2018/04.html">2018年4月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="https://www.cnblogs.com/skyfsm/archive/2018/02.html">2018年2月 (6)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="https://www.cnblogs.com/skyfsm/archive/2018/01.html">2018年1月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_9" href="https://www.cnblogs.com/skyfsm/archive/2017/12.html">2017年12月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_10" href="https://www.cnblogs.com/skyfsm/archive/2017/11.html">2017年11月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_11" href="https://www.cnblogs.com/skyfsm/archive/2017/10.html">2017年10月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_12" href="https://www.cnblogs.com/skyfsm/archive/2017/09.html">2017年9月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_13" href="https://www.cnblogs.com/skyfsm/archive/2017/08.html">2017年8月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_14" href="https://www.cnblogs.com/skyfsm/archive/2017/07.html">2017年7月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_15" href="https://www.cnblogs.com/skyfsm/archive/2017/06.html">2017年6月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_16" href="https://www.cnblogs.com/skyfsm/archive/2017/05.html">2017年5月 (17)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_17" href="https://www.cnblogs.com/skyfsm/archive/2017/04.html">2017年4月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_18" href="https://www.cnblogs.com/skyfsm/archive/2017/02.html">2017年2月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_19" href="https://www.cnblogs.com/skyfsm/archive/2017/01.html">2017年1月 (5)</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_scorerank" class="sidebar-block">
+<div class="catListBlogRank">
+<h3 class="catListTitle">积分与排名</h3>
+<ul>
+	<li class="liScore">
+		积分 -	211604
+	</li>
+	<li class="liRank">
+		排名 -	1722
+	</li>
+</ul>
+</div>
+
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/10345305.html#4298249">1. Re:【OCR技术系列之八】端到端不定长文本识别CRNN代码实现</a></li>
+        <li class="recent_comment_body">CNN用的是VGG16吗？为什么层数有点不太一样啊？</li>
+        <li class="recent_comment_author">--明天周六了</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/10345305.html#4297958">2. Re:【OCR技术系列之八】端到端不定长文本识别CRNN代码实现</a></li>
+        <li class="recent_comment_body">楼主你好，想问下您是如何利用图像处理技术手工大批量生成文字图像的呢？有看过您用图像处理方法生成单字的博文，但对于生成这种不定长文本行的并且背景也有所不同的训练数据，请问您是怎么做到的呢，谢谢您啦</li>
+        <li class="recent_comment_author">--MrZWJax</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/8330882.html#4297177">3. Re:【Keras】基于SegNet和U-Net的遥感图像语义分割</a></li>
+        <li class="recent_comment_body">@学艺from keras import backend as K K.set_image_dim_ordering('th') 在文件开头加上这个原因算 你用的TensorFlow 博主用的..........</li>
+        <li class="recent_comment_author">--星星之火250</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/8330882.html#4297095">4. Re:【Keras】基于SegNet和U-Net的遥感图像语义分割</a></li>
+        <li class="recent_comment_body">@Tripader 在预测代码 那块， 其中分割256*256*3的 逻辑上 你没有遇到问题吗？...</li>
+        <li class="recent_comment_author">--星星之火250</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/8330882.html#4296883">5. Re:【Keras】基于SegNet和U-Net的遥感图像语义分割</a></li>
+        <li class="recent_comment_body">请问segnet训练时报错ValueError:y contains precviously unseen labels怎么解决？</li>
+        <li class="recent_comment_author">--wenny-bell</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/6790245.html">1. 卷积神经网络CNN总结(216484)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6806246.html">2. 基于深度学习的目标检测技术演进：R-CNN、Fast R-CNN、Faster R-CNN(203783)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html">3. OpenCV探索之路（二十四）图像拼接和图像融合技术(85241)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8451834.html">4. CNN网络架构演进：从LeNet到DenseNet(54846)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7401523.html">5. OpenCV探索之路（二十三）：特征检测和特征匹配方法汇总(51950)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html">6. 【OCR技术系列之四】基于深度学习的文字识别（3755个汉字）(48344)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6934246.html">7. C++ STL快速入门(45014)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6879265.html">8. OpenCV探索之路（六）：边缘检测（canny、sobel、laplacian）(44104)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6287787.html">9. Linux编程之UDP SOCKET全攻略(40484)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6897313.html">10. OpenCV探索之路（十四）：绘制点、直线、几何图形(36099)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html">1. 【OCR技术系列之四】基于深度学习的文字识别（3755个汉字）(77)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8330882.html">2. 【Keras】基于SegNet和U-Net的遥感图像语义分割(69)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html">3. OpenCV探索之路（二十四）图像拼接和图像融合技术(67)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/10345305.html">4. 【OCR技术系列之八】端到端不定长文本识别CRNN代码实现(51)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8051705.html">5. 【Keras】从两个实际任务掌握图像分类(33)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/6806246.html">1. 基于深度学习的目标检测技术演进：R-CNN、Fast R-CNN、Faster R-CNN(88)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6790245.html">2. 卷积神经网络CNN总结(60)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html">3. 【OCR技术系列之四】基于深度学习的文字识别（3755个汉字）(21)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/10202575.html">4. 我的2018：OCR、实习和秋招(20)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8330882.html">5. 【Keras】基于SegNet和U-Net的遥感图像语义分割(19)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8451834.html">6. CNN网络架构演进：从LeNet到DenseNet(18)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html">7. OpenCV探索之路（二十四）图像拼接和图像融合技术(18)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/9613894.html">8. 我在北京实习的四个月(15)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8088158.html">9. 读研以来的一些感想：名校好在哪里？(13)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7923015.html">10. 【OCR技术系列之一】字符识别技术总览(12)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2019 Madcola
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+
+<iframe id="google_osd_static_frame_3367930252216" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;" src="./OpenCV探索之路（二十七）：皮肤检测技术 - Madcola - 博客园_files/saved_resource(1).html"></iframe></body></html>

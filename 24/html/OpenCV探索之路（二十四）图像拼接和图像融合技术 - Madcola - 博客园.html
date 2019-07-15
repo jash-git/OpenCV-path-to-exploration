@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)https://www.cnblogs.com/skyfsm/p/7411961.html -->
+<html lang="zh-TW" class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园</title>
+    <meta property="og:description" content="图像拼接在实际的应用场景很广，比如无人机航拍，遥感图像等等，图像拼接是进一步做图像理解基础步骤，拼接效果的好坏直接影响接下来的工作，所以一个好的图像拼接算法非常重要。 再举一个身边的例子吧，你用你的手">
+    <link type="text/css" rel="stylesheet" href="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/bundle-SimpleMemory.css">
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/bundle-SimpleMemory-mobile.css">
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/skyfsm/rss">
+    <link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/skyfsm/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/skyfsm/wlwmanifest.xml">
+    <script src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/osd.js.下載"></script><script src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/pubads_impl_modern_rendering_2019070801.js.下載"></script><script async="" src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/analytics.js.下載"></script><script src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/jquery-2.2.0.min.js.下載"></script>
+    <script>var currentBlogId=327280;var currentBlogApp='skyfsm',cb_enable_mathjax=true;var isLogined=false;</script>
+    <script type="text/x-mathjax-config;executed=true">
+    MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processClass: 'math', processEscapes: true },
+        TeX: { 
+            equationNumbers: { autoNumber: ['AMS'], useLabelIds: true }, 
+            extensions: ['extpfeil.js'],
+            Macros: {bm: "\\boldsymbol"}
+        },
+        'HTML-CSS': { linebreaks: { automatic: true } },
+        SVG: { linebreaks: { automatic: true } }
+        });
+    </script><script src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/MathJax.js.下載"></script>
+<script src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/blog-common.js.下載" type="text/javascript"></script>
+<script src="chrome-extension://jhffgcfmcckgmioipfnmbannkpncfipo/util.js"></script><script src="chrome-extension://jhffgcfmcckgmioipfnmbannkpncfipo/pagejs.js"></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><link rel="preload" href="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/f(4).txt" as="script"><script type="text/javascript" src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/f(4).txt"></script><link rel="preload" href="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/f(5).txt" as="script"><script type="text/javascript" src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/f(5).txt"></script><script src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/pubads_impl_modern_2019070801.js.下載" async=""></script><link rel="prefetch" href="https://tpc.googlesyndication.com/safeframe/1-0-35/html/container.html"><link type="text/css" rel="stylesheet" charset="UTF-8" href="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/translateelement.css"></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<a name="top"></a>
+
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="https://www.cnblogs.com/skyfsm/"><img id="blogLogo" src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/logo.gif" alt="返回主頁"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/skyfsm/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">冠軍的試煉</font></font></a></h1>
+<h2><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">悟已往之不諫，知來者之可追</font></font></h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">博客園</font></font></a></li>
+<li><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/skyfsm/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">首頁</font></font></a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">新隨筆</font></font></a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/Madcola"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">聯繫</font></font></a></li>
+<li><a id="blog_nav_rss" class="menu" href="https://www.cnblogs.com/skyfsm/rss"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">訂閱</font></font></a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="https://www.cnblogs.com/skyfsm/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">管理</font></font></a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">隨筆- 69&nbsp;  </font></font></span>
+<span id="stats_article_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">文章- 0&nbsp;  </font></font></span>
+<span id="stats-comment_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">評論- 793</font></font></span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+        <div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/skyfsm/p/7411961.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OpenCV探索之路（二十四）圖像拼接和圖像融合技術</font></font></a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">圖像拼接在實際的應用場景很廣，比如無人機航拍，遙感圖像等等，圖像拼接是進一步做圖像理解基礎步驟，拼接效果的好壞直接影響接下來的工作，所以一個好的圖像拼接算法非常重要。</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">再舉一個身邊的例子吧，你用你的手機對某一場景拍照，但是你沒有辦法一次將所有你要拍的景物全部拍下來，所以你對該場景從左往右依次拍了好幾張圖，來把你要拍的所有景物記錄下來。</font><font style="vertical-align: inherit;">那麼我們能不能把這些圖像拼接成一個大圖呢？</font><font style="vertical-align: inherit;">我們利用opencv就可以做到圖像拼接的效果！</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">比如我們有對這兩張圖進行拼接。</font></font></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154321308-71491510.png"></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">從上面兩張圖可以看出，這兩張圖有比較多的重疊部分，這也是拼接的基本要求。</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">那麼要實現圖像拼接需要那幾步呢？</font><font style="vertical-align: inherit;">簡單來說有以下幾步：</font></font></p>
+<ol>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">對每幅圖進行特徵點提取</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">對對特徵點進行匹配</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">進行圖像配準</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">把圖像拷貝到另一幅圖像的特定位置</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">對重疊邊界進行特殊處理</font></font></li>
+</ol>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">好吧，那就開始正式實現圖像配準。</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第一步就是特徵點提取。</font><font style="vertical-align: inherit;">現在CV領域有很多特徵點的定義，比如sift、surf、harris角點、ORB都是很有名的特徵因子，都可以用來做圖像拼接的工作，他們各有優勢。</font><font style="vertical-align: inherit;">本文將使用ORB和SURF進行圖像拼接，用其他方法進行拼接也是類似的。</font></font></p>
+<h2 id="基于surf的图像拼接"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">基於SURF的圖像拼接</font></font></h2>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">用SIFT算法來實現圖像拼接是很常用的方法，但是因為SIFT計算量很大，所以在速度要求很高的場合下不再適用。</font><font style="vertical-align: inherit;">所以，它的改進方法SURF因為在速度方面有了明顯的提高（速度是SIFT的3倍），所以在圖像拼接領域還是大有作為。</font><font style="vertical-align: inherit;">雖說SURF精確度和穩定性不及SIFT，但是其綜合能力還是優越一些。</font><font style="vertical-align: inherit;">下面將詳細介紹拼接的主要步驟。</font></font></p>
+<h3 id="特征点提取和匹配"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.特徵點提取和匹配</font></font></h3>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">特徵點提取和匹配的方法我在上一篇文章</font></font><a href="http://www.cnblogs.com/skyfsm/p/7401523.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">《OpenCV探索之路（二十三）：特徵檢測和特徵匹配方法彙總》</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">中做了詳細的介紹，在這裡直接使用上文所總結的SURF特徵提取和特徵匹配的方法。</font></font></p>
+<pre><code class="hljs cpp"><span class="hljs-comment">//提取特征点    </span>
+<span class="hljs-function">SurfFeatureDetector <span class="hljs-title">Detector</span><span class="hljs-params">(<span class="hljs-number">2000</span>)</span></span>;  
+<span class="hljs-built_in">vector</span>&lt;KeyPoint&gt; keyPoint1, keyPoint2;<font></font>
+Detector.detect(image1, keyPoint1);<font></font>
+Detector.detect(image2, keyPoint2);<font></font>
+<font></font>
+<span class="hljs-comment">//特征点描述，为下边的特征点匹配做准备    </span><font></font>
+SurfDescriptorExtractor Descriptor;<font></font>
+Mat imageDesc1, imageDesc2;<font></font>
+Descriptor.compute(image1, keyPoint1, imageDesc1);<font></font>
+Descriptor.compute(image2, keyPoint2, imageDesc2);<font></font>
+<font></font>
+FlannBasedMatcher matcher;<font></font>
+<span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;DMatch&gt; &gt; matchePoints;
+<span class="hljs-built_in">vector</span>&lt;DMatch&gt; GoodMatchePoints;<font></font>
+<font></font>
+<span class="hljs-built_in">vector</span>&lt;Mat&gt; train_desc(<span class="hljs-number">1</span>, imageDesc1);<font></font>
+matcher.add(train_desc);<font></font>
+matcher.train();<font></font>
+<font></font>
+matcher.knnMatch(imageDesc2, matchePoints, <span class="hljs-number">2</span>);
+<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"total match points: "</span> &lt;&lt; matchePoints.size() &lt;&lt; <span class="hljs-built_in">endl</span>;<font></font>
+<font></font>
+<span class="hljs-comment">// Lowe's algorithm,获取优秀匹配点</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; matchePoints.size(); i++)<font></font>
+{<font></font>
+    <span class="hljs-keyword">if</span> (matchePoints[i][<span class="hljs-number">0</span>].distance &lt; <span class="hljs-number">0.4</span> * matchePoints[i][<span class="hljs-number">1</span>].distance)<font></font>
+    {<font></font>
+        GoodMatchePoints.push_back(matchePoints[i][<span class="hljs-number">0</span>]);<font></font>
+    }<font></font>
+}<font></font>
+<font></font>
+Mat first_match;<font></font>
+drawMatches(image02, keyPoint2, image01, keyPoint1, GoodMatchePoints, first_match);<font></font>
+imshow(<span class="hljs-string">"first_match "</span>, first_match);</code></pre>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154344449-509144423.png"></p>
+<h3 id="图像配准"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2.圖像配準</font></font></h3>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">這樣子我們就可以得到了兩幅待拼接圖的匹配點集，接下來我們進行圖像的配準，即將兩張圖像轉換為同一坐標下，這裡我們需要使用findHomography函數來求得變換矩陣。</font><font style="vertical-align: inherit;">但是需要注意的是，findHomography函數所要用到的點集是Point2f類型的，所有我們需要對我們剛得到的點集GoodMatchePoints再做一次處理，使其轉換為Point2f類型的點集。</font></font></p>
+<pre><code class="hljs cpp"><span class="hljs-built_in">vector</span>&lt;Point2f&gt; imagePoints1, imagePoints2;<font></font>
+<font></font>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i&lt;GoodMatchePoints.size(); i++)<font></font>
+{<font></font>
+    imagePoints2.push_back(keyPoint2[GoodMatchePoints[i].queryIdx].pt);<font></font>
+    imagePoints1.push_back(keyPoint1[GoodMatchePoints[i].trainIdx].pt);<font></font>
+}</code></pre>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">這樣子，我們就可以拿著imagePoints1, imagePoints2去求變換矩陣了，並且實現圖像配準。</font><font style="vertical-align: inherit;">值得注意的是findHomography函數的參數中我們選澤了CV_RANSAC，這表明我們選擇RANSAC算法繼續篩選可靠地匹配點，這使得匹配點解更為精確。</font></font></p>
+<pre><code class="hljs cpp"><span class="hljs-comment">//获取图像1到图像2的投影映射矩阵 尺寸为3*3  </span><font></font>
+Mat homo = findHomography(imagePoints1, imagePoints2, CV_RANSAC);<font></font>
+<span class="hljs-comment">////也可以使用getPerspectiveTransform方法获得透视变换矩阵，不过要求只能有4个点，效果稍差  </span>
+<span class="hljs-comment">//Mat   homo=getPerspectiveTransform(imagePoints1,imagePoints2);  </span>
+<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"变换矩阵为：\n"</span> &lt;&lt; homo &lt;&lt; <span class="hljs-built_in">endl</span> &lt;&lt; <span class="hljs-built_in">endl</span>; <span class="hljs-comment">//输出映射矩阵     </span><font></font>
+<font></font>
+<span class="hljs-comment">//图像配准  </span><font></font>
+Mat imageTransform1, imageTransform2;<font></font>
+warpPerspective(image01, imageTransform1, homo, Size(MAX(corners.right_top.x, corners.right_bottom.x), image02.rows));<font></font>
+<span class="hljs-comment">//warpPerspective(image01, imageTransform2, adjustMat*homo, Size(image02.cols*1.3, image02.rows*1.8));</span>
+imshow(<span class="hljs-string">"直接经过透视矩阵变换"</span>, imageTransform1);<font></font>
+imwrite(<span class="hljs-string">"trans1.jpg"</span>, imageTransform1);</code></pre>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154403277-379911836.png"></p>
+<h3 id="图像拷贝"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3. 圖像拷貝</font></font></h3>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">拷貝的思路很簡單，就是將左圖直接拷貝到配準圖上就可以了。</font></font></p>
+<pre><code class="hljs java"><span class="hljs-comment">//创建拼接后的图,需提前计算图的大小</span>
+<span class="hljs-keyword">int</span> dst_width = imageTransform1.cols;  <span class="hljs-comment">//取最右点的长度为拼接图的长度</span>
+<span class="hljs-keyword">int</span> dst_height = image02.rows;<font></font>
+<font></font>
+<span class="hljs-function">Mat <span class="hljs-title">dst</span><span class="hljs-params">(dst_height, dst_width, CV_8UC3)</span></span>;<font></font>
+dst.setTo(<span class="hljs-number">0</span>);<font></font>
+<font></font>
+imageTransform1.copyTo(dst(Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, imageTransform1.cols, imageTransform1.rows)));<font></font>
+image02.copyTo(dst(Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, image02.cols, image02.rows)));<font></font>
+<font></font>
+imshow(<span class="hljs-string">"b_dst"</span>, dst);</code></pre>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154425449-1866547572.png"></p>
+<h3 id="图像融合去裂缝处理"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4.圖像融合（去裂縫處理）</font></font></h3>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">從上圖可以看出，兩圖的拼接並不自然，原因就在於拼接圖的交界處，兩圖因為光照色澤的原因使得兩圖交界處的過渡很糟糕，所以需要特定的處理解決這種不自然。</font><font style="vertical-align: inherit;">這裡的處理思路是加權融合，在重疊部分由前一幅圖像慢慢過渡到第二幅圖像，即將圖像的重疊區域的像素值按一定的權值相加合成新的圖像。</font></font></p>
+<pre><code class="hljs java">
+<span class="hljs-comment">//优化两图的连接处，使得拼接自然</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">OptimizeSeam</span><span class="hljs-params">(Mat&amp; img1, Mat&amp; trans, Mat&amp; dst)</span>
+</span>{
+    <span class="hljs-keyword">int</span> start = MIN(corners.left_top.x, corners.left_bottom.x);<span class="hljs-comment">//开始位置，即重叠区域的左边界  </span><font></font>
+<font></font>
+    <span class="hljs-keyword">double</span> processWidth = img1.cols - start;<span class="hljs-comment">//重叠区域的宽度  </span>
+    <span class="hljs-keyword">int</span> rows = dst.rows;
+    <span class="hljs-keyword">int</span> cols = img1.cols; <span class="hljs-comment">//注意，是列数*通道数</span>
+    <span class="hljs-keyword">double</span> alpha = <span class="hljs-number">1</span>;<span class="hljs-comment">//img1中像素的权重  </span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; rows; i++)<font></font>
+    {<font></font>
+        uchar* p = img1.ptr&lt;uchar&gt;(i);  <span class="hljs-comment">//获取第i行的首地址</span><font></font>
+        uchar* t = trans.ptr&lt;uchar&gt;(i);<font></font>
+        uchar* d = dst.ptr&lt;uchar&gt;(i);<font></font>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = start; j &lt; cols; j++)<font></font>
+        {<font></font>
+            <span class="hljs-comment">//如果遇到图像trans中无像素的黑点，则完全拷贝img1中的数据</span>
+            <span class="hljs-keyword">if</span> (t[j * <span class="hljs-number">3</span>] == <span class="hljs-number">0</span> &amp;&amp; t[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] == <span class="hljs-number">0</span> &amp;&amp; t[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] == <span class="hljs-number">0</span>)<font></font>
+            {<font></font>
+                alpha = <span class="hljs-number">1</span>;<font></font>
+            }<font></font>
+            <span class="hljs-keyword">else</span><font></font>
+            {<font></font>
+                <span class="hljs-comment">//img1中像素的权重，与当前处理点距重叠区域左边界的距离成正比，实验证明，这种方法确实好  </span><font></font>
+                alpha = (processWidth - (j - start)) / processWidth;<font></font>
+            }<font></font>
+<font></font>
+            d[j * <span class="hljs-number">3</span>] = p[j * <span class="hljs-number">3</span>] * alpha + t[j * <span class="hljs-number">3</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+            d[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] = p[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] * alpha + t[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+            d[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] = p[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] * alpha + t[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+<font></font>
+        }<font></font>
+    }<font></font>
+<font></font>
+}</code></pre>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154445464-413726039.png"></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">多嘗試幾張，驗證拼接效果</font></font></p>
+<p><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">測試一</font></font></strong></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154454839-1253938282.png"></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154506605-1380482375.png"></p>
+<p><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">測試二</font></font></strong></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154518449-1425129916.png"></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154535324-2137232231.png"></p>
+<p><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">測試三</font></font></strong></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154551746-1673577698.png"></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154603746-881176266.png"></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最後給出完整的SURF算法實現的拼接代碼。</font></font></p>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"highgui/highgui.hpp"</span>    </span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"opencv2/nonfree/nonfree.hpp"</span>    </span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"opencv2/legacy/legacy.hpp"</span>   </span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;  </span></span><font></font>
+<font></font>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> cv;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">OptimizeSeam</span><span class="hljs-params">(Mat&amp; img1, Mat&amp; trans, Mat&amp; dst)</span></span>;<font></font>
+<font></font>
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span>
+{</span><font></font>
+    Point2f left_top;<font></font>
+    Point2f left_bottom;<font></font>
+    Point2f right_top;<font></font>
+    Point2f right_bottom;<font></font>
+}<span class="hljs-keyword">four_corners_t</span>;<font></font>
+<font></font>
+<span class="hljs-keyword">four_corners_t</span> corners;<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CalcCorners</span><span class="hljs-params">(<span class="hljs-keyword">const</span> Mat&amp; H, <span class="hljs-keyword">const</span> Mat&amp; src)</span>
+</span>{
+    <span class="hljs-keyword">double</span> v2[] = { <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span> };<span class="hljs-comment">//左上角</span>
+    <span class="hljs-keyword">double</span> v1[<span class="hljs-number">3</span>];<span class="hljs-comment">//变换后的坐标值</span>
+    Mat V2 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v2);  <span class="hljs-comment">//列向量</span>
+    Mat V1 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v1);  <span class="hljs-comment">//列向量</span><font></font>
+<font></font>
+    V1 = H * V2;<font></font>
+    <span class="hljs-comment">//左上角(0,0,1)</span>
+    <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"V2: "</span> &lt;&lt; V2 &lt;&lt; <span class="hljs-built_in">endl</span>;
+    <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"V1: "</span> &lt;&lt; V1 &lt;&lt; <span class="hljs-built_in">endl</span>;<font></font>
+    corners.left_top.x = v1[<span class="hljs-number">0</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+    corners.left_top.y = v1[<span class="hljs-number">1</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+<font></font>
+    <span class="hljs-comment">//左下角(0,src.rows,1)</span>
+    v2[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;<font></font>
+    v2[<span class="hljs-number">1</span>] = src.rows;<font></font>
+    v2[<span class="hljs-number">2</span>] = <span class="hljs-number">1</span>;<font></font>
+    V2 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v2);  <span class="hljs-comment">//列向量</span>
+    V1 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v1);  <span class="hljs-comment">//列向量</span><font></font>
+    V1 = H * V2;<font></font>
+    corners.left_bottom.x = v1[<span class="hljs-number">0</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+    corners.left_bottom.y = v1[<span class="hljs-number">1</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+<font></font>
+    <span class="hljs-comment">//右上角(src.cols,0,1)</span>
+    v2[<span class="hljs-number">0</span>] = src.cols;<font></font>
+    v2[<span class="hljs-number">1</span>] = <span class="hljs-number">0</span>;<font></font>
+    v2[<span class="hljs-number">2</span>] = <span class="hljs-number">1</span>;<font></font>
+    V2 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v2);  <span class="hljs-comment">//列向量</span>
+    V1 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v1);  <span class="hljs-comment">//列向量</span><font></font>
+    V1 = H * V2;<font></font>
+    corners.right_top.x = v1[<span class="hljs-number">0</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+    corners.right_top.y = v1[<span class="hljs-number">1</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+<font></font>
+    <span class="hljs-comment">//右下角(src.cols,src.rows,1)</span>
+    v2[<span class="hljs-number">0</span>] = src.cols;<font></font>
+    v2[<span class="hljs-number">1</span>] = src.rows;<font></font>
+    v2[<span class="hljs-number">2</span>] = <span class="hljs-number">1</span>;<font></font>
+    V2 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v2);  <span class="hljs-comment">//列向量</span>
+    V1 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v1);  <span class="hljs-comment">//列向量</span><font></font>
+    V1 = H * V2;<font></font>
+    corners.right_bottom.x = v1[<span class="hljs-number">0</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+    corners.right_bottom.y = v1[<span class="hljs-number">1</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> *argv[])</span>
+</span>{<font></font>
+    Mat image01 = imread(<span class="hljs-string">"g5.jpg"</span>, <span class="hljs-number">1</span>);    <span class="hljs-comment">//右图</span>
+    Mat image02 = imread(<span class="hljs-string">"g4.jpg"</span>, <span class="hljs-number">1</span>);    <span class="hljs-comment">//左图</span>
+    imshow(<span class="hljs-string">"p2"</span>, image01);<font></font>
+    imshow(<span class="hljs-string">"p1"</span>, image02);<font></font>
+<font></font>
+    <span class="hljs-comment">//灰度图转换  </span><font></font>
+    Mat image1, image2;<font></font>
+    cvtColor(image01, image1, CV_RGB2GRAY);<font></font>
+    cvtColor(image02, image2, CV_RGB2GRAY);<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-comment">//提取特征点    </span>
+    <span class="hljs-function">SurfFeatureDetector <span class="hljs-title">Detector</span><span class="hljs-params">(<span class="hljs-number">2000</span>)</span></span>;  
+    <span class="hljs-built_in">vector</span>&lt;KeyPoint&gt; keyPoint1, keyPoint2;<font></font>
+    Detector.detect(image1, keyPoint1);<font></font>
+    Detector.detect(image2, keyPoint2);<font></font>
+<font></font>
+    <span class="hljs-comment">//特征点描述，为下边的特征点匹配做准备    </span><font></font>
+    SurfDescriptorExtractor Descriptor;<font></font>
+    Mat imageDesc1, imageDesc2;<font></font>
+    Descriptor.compute(image1, keyPoint1, imageDesc1);<font></font>
+    Descriptor.compute(image2, keyPoint2, imageDesc2);<font></font>
+<font></font>
+    FlannBasedMatcher matcher;<font></font>
+    <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;DMatch&gt; &gt; matchePoints;
+    <span class="hljs-built_in">vector</span>&lt;DMatch&gt; GoodMatchePoints;<font></font>
+<font></font>
+    <span class="hljs-built_in">vector</span>&lt;Mat&gt; train_desc(<span class="hljs-number">1</span>, imageDesc1);<font></font>
+    matcher.add(train_desc);<font></font>
+    matcher.train();<font></font>
+<font></font>
+    matcher.knnMatch(imageDesc2, matchePoints, <span class="hljs-number">2</span>);
+    <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"total match points: "</span> &lt;&lt; matchePoints.size() &lt;&lt; <span class="hljs-built_in">endl</span>;<font></font>
+<font></font>
+    <span class="hljs-comment">// Lowe's algorithm,获取优秀匹配点</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; matchePoints.size(); i++)<font></font>
+    {<font></font>
+        <span class="hljs-keyword">if</span> (matchePoints[i][<span class="hljs-number">0</span>].distance &lt; <span class="hljs-number">0.4</span> * matchePoints[i][<span class="hljs-number">1</span>].distance)<font></font>
+        {<font></font>
+            GoodMatchePoints.push_back(matchePoints[i][<span class="hljs-number">0</span>]);<font></font>
+        }<font></font>
+    }<font></font>
+<font></font>
+    Mat first_match;<font></font>
+    drawMatches(image02, keyPoint2, image01, keyPoint1, GoodMatchePoints, first_match);<font></font>
+    imshow(<span class="hljs-string">"first_match "</span>, first_match);<font></font>
+<font></font>
+    <span class="hljs-built_in">vector</span>&lt;Point2f&gt; imagePoints1, imagePoints2;<font></font>
+<font></font>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i&lt;GoodMatchePoints.size(); i++)<font></font>
+    {<font></font>
+        imagePoints2.push_back(keyPoint2[GoodMatchePoints[i].queryIdx].pt);<font></font>
+        imagePoints1.push_back(keyPoint1[GoodMatchePoints[i].trainIdx].pt);<font></font>
+    }<font></font>
+<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-comment">//获取图像1到图像2的投影映射矩阵 尺寸为3*3  </span><font></font>
+    Mat homo = findHomography(imagePoints1, imagePoints2, CV_RANSAC);<font></font>
+    <span class="hljs-comment">////也可以使用getPerspectiveTransform方法获得透视变换矩阵，不过要求只能有4个点，效果稍差  </span>
+    <span class="hljs-comment">//Mat   homo=getPerspectiveTransform(imagePoints1,imagePoints2);  </span>
+    <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"变换矩阵为：\n"</span> &lt;&lt; homo &lt;&lt; <span class="hljs-built_in">endl</span> &lt;&lt; <span class="hljs-built_in">endl</span>; <span class="hljs-comment">//输出映射矩阵      </span><font></font>
+<font></font>
+   <span class="hljs-comment">//计算配准图的四个顶点坐标</span><font></font>
+    CalcCorners(homo, image01);<font></font>
+    <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"left_top:"</span> &lt;&lt; corners.left_top &lt;&lt; <span class="hljs-built_in">endl</span>;
+    <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"left_bottom:"</span> &lt;&lt; corners.left_bottom &lt;&lt; <span class="hljs-built_in">endl</span>;
+    <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"right_top:"</span> &lt;&lt; corners.right_top &lt;&lt; <span class="hljs-built_in">endl</span>;
+    <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"right_bottom:"</span> &lt;&lt; corners.right_bottom &lt;&lt; <span class="hljs-built_in">endl</span>;<font></font>
+<font></font>
+    <span class="hljs-comment">//图像配准  </span><font></font>
+    Mat imageTransform1, imageTransform2;<font></font>
+    warpPerspective(image01, imageTransform1, homo, Size(MAX(corners.right_top.x, corners.right_bottom.x), image02.rows));<font></font>
+    <span class="hljs-comment">//warpPerspective(image01, imageTransform2, adjustMat*homo, Size(image02.cols*1.3, image02.rows*1.8));</span>
+    imshow(<span class="hljs-string">"直接经过透视矩阵变换"</span>, imageTransform1);<font></font>
+    imwrite(<span class="hljs-string">"trans1.jpg"</span>, imageTransform1);<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-comment">//创建拼接后的图,需提前计算图的大小</span>
+    <span class="hljs-keyword">int</span> dst_width = imageTransform1.cols;  <span class="hljs-comment">//取最右点的长度为拼接图的长度</span>
+    <span class="hljs-keyword">int</span> dst_height = image02.rows;<font></font>
+<font></font>
+    <span class="hljs-function">Mat <span class="hljs-title">dst</span><span class="hljs-params">(dst_height, dst_width, CV_8UC3)</span></span>;<font></font>
+    dst.setTo(<span class="hljs-number">0</span>);<font></font>
+<font></font>
+    imageTransform1.copyTo(dst(Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, imageTransform1.cols, imageTransform1.rows)));<font></font>
+    image02.copyTo(dst(Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, image02.cols, image02.rows)));<font></font>
+<font></font>
+    imshow(<span class="hljs-string">"b_dst"</span>, dst);<font></font>
+<font></font>
+<font></font>
+    OptimizeSeam(image02, imageTransform1, dst);<font></font>
+<font></font>
+<font></font>
+    imshow(<span class="hljs-string">"dst"</span>, dst);<font></font>
+    imwrite(<span class="hljs-string">"dst.jpg"</span>, dst);<font></font>
+<font></font>
+    waitKey();<font></font>
+<font></font>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<font></font>
+}<font></font>
+<font></font>
+<font></font>
+<span class="hljs-comment">//优化两图的连接处，使得拼接自然</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">OptimizeSeam</span><span class="hljs-params">(Mat&amp; img1, Mat&amp; trans, Mat&amp; dst)</span>
+</span>{
+    <span class="hljs-keyword">int</span> start = MIN(corners.left_top.x, corners.left_bottom.x);<span class="hljs-comment">//开始位置，即重叠区域的左边界  </span><font></font>
+<font></font>
+    <span class="hljs-keyword">double</span> processWidth = img1.cols - start;<span class="hljs-comment">//重叠区域的宽度  </span>
+    <span class="hljs-keyword">int</span> rows = dst.rows;
+    <span class="hljs-keyword">int</span> cols = img1.cols; <span class="hljs-comment">//注意，是列数*通道数</span>
+    <span class="hljs-keyword">double</span> alpha = <span class="hljs-number">1</span>;<span class="hljs-comment">//img1中像素的权重  </span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; rows; i++)<font></font>
+    {<font></font>
+        uchar* p = img1.ptr&lt;uchar&gt;(i);  <span class="hljs-comment">//获取第i行的首地址</span><font></font>
+        uchar* t = trans.ptr&lt;uchar&gt;(i);<font></font>
+        uchar* d = dst.ptr&lt;uchar&gt;(i);<font></font>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = start; j &lt; cols; j++)<font></font>
+        {<font></font>
+            <span class="hljs-comment">//如果遇到图像trans中无像素的黑点，则完全拷贝img1中的数据</span>
+            <span class="hljs-keyword">if</span> (t[j * <span class="hljs-number">3</span>] == <span class="hljs-number">0</span> &amp;&amp; t[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] == <span class="hljs-number">0</span> &amp;&amp; t[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] == <span class="hljs-number">0</span>)<font></font>
+            {<font></font>
+                alpha = <span class="hljs-number">1</span>;<font></font>
+            }<font></font>
+            <span class="hljs-keyword">else</span><font></font>
+            {<font></font>
+                <span class="hljs-comment">//img1中像素的权重，与当前处理点距重叠区域左边界的距离成正比，实验证明，这种方法确实好  </span><font></font>
+                alpha = (processWidth - (j - start)) / processWidth;<font></font>
+            }<font></font>
+<font></font>
+            d[j * <span class="hljs-number">3</span>] = p[j * <span class="hljs-number">3</span>] * alpha + t[j * <span class="hljs-number">3</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+            d[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] = p[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] * alpha + t[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+            d[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] = p[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] * alpha + t[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+<font></font>
+        }<font></font>
+    }<font></font>
+<font></font>
+}</code></pre>
+<h2 id="基于orb的图像拼接"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">基於ORB的圖像拼接</font></font></h2>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">利用ORB進行圖像拼接的思路跟上面的思路基本一樣，只是特徵提取和特徵點匹配的方式略有差異罷了。</font><font style="vertical-align: inherit;">這裡就不再詳細介紹思路了，直接貼代碼看效果。</font></font></p>
+<pre><code class="hljs objectivec"><span class="hljs-meta">#include <span class="hljs-meta-string">"highgui/highgui.hpp"</span>    </span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"opencv2/nonfree/nonfree.hpp"</span>    </span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">"opencv2/legacy/legacy.hpp"</span>   </span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;iostream&gt;</span>  </span><font></font>
+<font></font>
+using namespace cv;<font></font>
+using namespace std;<font></font>
+<font></font>
+<span class="hljs-keyword">void</span> OptimizeSeam(Mat&amp; img1, Mat&amp; trans, Mat&amp; dst);<font></font>
+<font></font>
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span><font></font>
+{<font></font>
+    Point2f left_top;<font></font>
+    Point2f left_bottom;<font></font>
+    Point2f right_top;<font></font>
+    Point2f right_bottom;<font></font>
+}four_corners_t;<font></font>
+<font></font>
+four_corners_t corners;<font></font>
+<font></font>
+<span class="hljs-keyword">void</span> CalcCorners(<span class="hljs-keyword">const</span> Mat&amp; H, <span class="hljs-keyword">const</span> Mat&amp; src)<font></font>
+{<font></font>
+    <span class="hljs-keyword">double</span> v2[] = { <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span> };<span class="hljs-comment">//左上角</span>
+    <span class="hljs-keyword">double</span> v1[<span class="hljs-number">3</span>];<span class="hljs-comment">//变换后的坐标值</span>
+    Mat V2 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v2);  <span class="hljs-comment">//列向量</span>
+    Mat V1 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v1);  <span class="hljs-comment">//列向量</span><font></font>
+<font></font>
+    V1 = H * V2;<font></font>
+    <span class="hljs-comment">//左上角(0,0,1)</span>
+    cout &lt;&lt; <span class="hljs-string">"V2: "</span> &lt;&lt; V2 &lt;&lt; endl;<font></font>
+    cout &lt;&lt; <span class="hljs-string">"V1: "</span> &lt;&lt; V1 &lt;&lt; endl;<font></font>
+    corners.left_top.x = v1[<span class="hljs-number">0</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+    corners.left_top.y = v1[<span class="hljs-number">1</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+<font></font>
+    <span class="hljs-comment">//左下角(0,src.rows,1)</span>
+    v2[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;<font></font>
+    v2[<span class="hljs-number">1</span>] = src.rows;<font></font>
+    v2[<span class="hljs-number">2</span>] = <span class="hljs-number">1</span>;<font></font>
+    V2 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v2);  <span class="hljs-comment">//列向量</span>
+    V1 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v1);  <span class="hljs-comment">//列向量</span><font></font>
+    V1 = H * V2;<font></font>
+    corners.left_bottom.x = v1[<span class="hljs-number">0</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+    corners.left_bottom.y = v1[<span class="hljs-number">1</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+<font></font>
+    <span class="hljs-comment">//右上角(src.cols,0,1)</span>
+    v2[<span class="hljs-number">0</span>] = src.cols;<font></font>
+    v2[<span class="hljs-number">1</span>] = <span class="hljs-number">0</span>;<font></font>
+    v2[<span class="hljs-number">2</span>] = <span class="hljs-number">1</span>;<font></font>
+    V2 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v2);  <span class="hljs-comment">//列向量</span>
+    V1 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v1);  <span class="hljs-comment">//列向量</span><font></font>
+    V1 = H * V2;<font></font>
+    corners.right_top.x = v1[<span class="hljs-number">0</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+    corners.right_top.y = v1[<span class="hljs-number">1</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+<font></font>
+    <span class="hljs-comment">//右下角(src.cols,src.rows,1)</span>
+    v2[<span class="hljs-number">0</span>] = src.cols;<font></font>
+    v2[<span class="hljs-number">1</span>] = src.rows;<font></font>
+    v2[<span class="hljs-number">2</span>] = <span class="hljs-number">1</span>;<font></font>
+    V2 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v2);  <span class="hljs-comment">//列向量</span>
+    V1 = Mat(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, CV_64FC1, v1);  <span class="hljs-comment">//列向量</span><font></font>
+    V1 = H * V2;<font></font>
+    corners.right_bottom.x = v1[<span class="hljs-number">0</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+    corners.right_bottom.y = v1[<span class="hljs-number">1</span>] / v1[<span class="hljs-number">2</span>];<font></font>
+<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-keyword">int</span> main(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> *argv[])<font></font>
+{<font></font>
+    Mat image01 = imread(<span class="hljs-string">"t1.jpg"</span>, <span class="hljs-number">1</span>);    <span class="hljs-comment">//右图</span>
+    Mat image02 = imread(<span class="hljs-string">"t2.jpg"</span>, <span class="hljs-number">1</span>);    <span class="hljs-comment">//左图</span>
+    imshow(<span class="hljs-string">"p2"</span>, image01);<font></font>
+    imshow(<span class="hljs-string">"p1"</span>, image02);<font></font>
+<font></font>
+    <span class="hljs-comment">//灰度图转换  </span><font></font>
+    Mat image1, image2;<font></font>
+    cvtColor(image01, image1, CV_RGB2GRAY);<font></font>
+    cvtColor(image02, image2, CV_RGB2GRAY);<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-comment">//提取特征点    </span>
+    OrbFeatureDetector  surfDetector(<span class="hljs-number">3000</span>);  <font></font>
+    vector&lt;KeyPoint&gt; keyPoint1, keyPoint2;<font></font>
+    surfDetector.detect(image1, keyPoint1);<font></font>
+    surfDetector.detect(image2, keyPoint2);<font></font>
+<font></font>
+    <span class="hljs-comment">//特征点描述，为下边的特征点匹配做准备    </span><font></font>
+    OrbDescriptorExtractor  SurfDescriptor;<font></font>
+    Mat imageDesc1, imageDesc2;<font></font>
+    SurfDescriptor.compute(image1, keyPoint1, imageDesc1);<font></font>
+    SurfDescriptor.compute(image2, keyPoint2, imageDesc2);<font></font>
+<font></font>
+    flann::Index flannIndex(imageDesc1, flann::LshIndexParams(<span class="hljs-number">12</span>, <span class="hljs-number">20</span>, <span class="hljs-number">2</span>), cvflann::FLANN_DIST_HAMMING);<font></font>
+<font></font>
+    vector&lt;DMatch&gt; GoodMatchePoints;<font></font>
+<font></font>
+    Mat macthIndex(imageDesc2.rows, <span class="hljs-number">2</span>, CV_32SC1), matchDistance(imageDesc2.rows, <span class="hljs-number">2</span>, CV_32FC1);<font></font>
+    flannIndex.knnSearch(imageDesc2, macthIndex, matchDistance, <span class="hljs-number">2</span>, flann::SearchParams());<font></font>
+<font></font>
+    <span class="hljs-comment">// Lowe's algorithm,获取优秀匹配点</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; matchDistance.rows; i++)<font></font>
+    {<font></font>
+        <span class="hljs-keyword">if</span> (matchDistance.at&lt;<span class="hljs-keyword">float</span>&gt;(i, <span class="hljs-number">0</span>) &lt; <span class="hljs-number">0.4</span> * matchDistance.at&lt;<span class="hljs-keyword">float</span>&gt;(i, <span class="hljs-number">1</span>))<font></font>
+        {<font></font>
+            DMatch dmatches(i, macthIndex.at&lt;<span class="hljs-keyword">int</span>&gt;(i, <span class="hljs-number">0</span>), matchDistance.at&lt;<span class="hljs-keyword">float</span>&gt;(i, <span class="hljs-number">0</span>));<font></font>
+            GoodMatchePoints.push_back(dmatches);<font></font>
+        }<font></font>
+    }<font></font>
+<font></font>
+    Mat first_match;<font></font>
+    drawMatches(image02, keyPoint2, image01, keyPoint1, GoodMatchePoints, first_match);<font></font>
+    imshow(<span class="hljs-string">"first_match "</span>, first_match);<font></font>
+<font></font>
+    vector&lt;Point2f&gt; imagePoints1, imagePoints2;<font></font>
+<font></font>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i&lt;GoodMatchePoints.size(); i++)<font></font>
+    {<font></font>
+        imagePoints2.push_back(keyPoint2[GoodMatchePoints[i].queryIdx].pt);<font></font>
+        imagePoints1.push_back(keyPoint1[GoodMatchePoints[i].trainIdx].pt);<font></font>
+    }<font></font>
+<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-comment">//获取图像1到图像2的投影映射矩阵 尺寸为3*3  </span><font></font>
+    Mat homo = findHomography(imagePoints1, imagePoints2, CV_RANSAC);<font></font>
+    <span class="hljs-comment">////也可以使用getPerspectiveTransform方法获得透视变换矩阵，不过要求只能有4个点，效果稍差  </span>
+    <span class="hljs-comment">//Mat   homo=getPerspectiveTransform(imagePoints1,imagePoints2);  </span>
+    cout &lt;&lt; <span class="hljs-string">"变换矩阵为：\n"</span> &lt;&lt; homo &lt;&lt; endl &lt;&lt; endl; <span class="hljs-comment">//输出映射矩阵      </span><font></font>
+<font></font>
+                                                <span class="hljs-comment">//计算配准图的四个顶点坐标</span><font></font>
+    CalcCorners(homo, image01);<font></font>
+    cout &lt;&lt; <span class="hljs-string">"left_top:"</span> &lt;&lt; corners.left_top &lt;&lt; endl;<font></font>
+    cout &lt;&lt; <span class="hljs-string">"left_bottom:"</span> &lt;&lt; corners.left_bottom &lt;&lt; endl;<font></font>
+    cout &lt;&lt; <span class="hljs-string">"right_top:"</span> &lt;&lt; corners.right_top &lt;&lt; endl;<font></font>
+    cout &lt;&lt; <span class="hljs-string">"right_bottom:"</span> &lt;&lt; corners.right_bottom &lt;&lt; endl;<font></font>
+<font></font>
+    <span class="hljs-comment">//图像配准  </span><font></font>
+    Mat imageTransform1, imageTransform2;<font></font>
+    warpPerspective(image01, imageTransform1, homo, Size(MAX(corners.right_top.x, corners.right_bottom.x), image02.rows));<font></font>
+    <span class="hljs-comment">//warpPerspective(image01, imageTransform2, adjustMat*homo, Size(image02.cols*1.3, image02.rows*1.8));</span>
+    imshow(<span class="hljs-string">"直接经过透视矩阵变换"</span>, imageTransform1);<font></font>
+    imwrite(<span class="hljs-string">"trans1.jpg"</span>, imageTransform1);<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-comment">//创建拼接后的图,需提前计算图的大小</span>
+    <span class="hljs-keyword">int</span> dst_width = imageTransform1.cols;  <span class="hljs-comment">//取最右点的长度为拼接图的长度</span>
+    <span class="hljs-keyword">int</span> dst_height = image02.rows;<font></font>
+<font></font>
+    Mat dst(dst_height, dst_width, CV_8UC3);<font></font>
+    dst.setTo(<span class="hljs-number">0</span>);<font></font>
+<font></font>
+    imageTransform1.copyTo(dst(Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, imageTransform1.cols, imageTransform1.rows)));<font></font>
+    image02.copyTo(dst(Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, image02.cols, image02.rows)));<font></font>
+<font></font>
+    imshow(<span class="hljs-string">"b_dst"</span>, dst);<font></font>
+<font></font>
+<font></font>
+    OptimizeSeam(image02, imageTransform1, dst);<font></font>
+<font></font>
+<font></font>
+    imshow(<span class="hljs-string">"dst"</span>, dst);<font></font>
+    imwrite(<span class="hljs-string">"dst.jpg"</span>, dst);<font></font>
+<font></font>
+    waitKey();<font></font>
+<font></font>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<font></font>
+}<font></font>
+<font></font>
+<font></font>
+<span class="hljs-comment">//优化两图的连接处，使得拼接自然</span>
+<span class="hljs-keyword">void</span> OptimizeSeam(Mat&amp; img1, Mat&amp; trans, Mat&amp; dst)<font></font>
+{<font></font>
+    <span class="hljs-keyword">int</span> start = MIN(corners.left_top.x, corners.left_bottom.x);<span class="hljs-comment">//开始位置，即重叠区域的左边界  </span><font></font>
+<font></font>
+    <span class="hljs-keyword">double</span> processWidth = img1.cols - start;<span class="hljs-comment">//重叠区域的宽度  </span>
+    <span class="hljs-keyword">int</span> rows = dst.rows;
+    <span class="hljs-keyword">int</span> cols = img1.cols; <span class="hljs-comment">//注意，是列数*通道数</span>
+    <span class="hljs-keyword">double</span> alpha = <span class="hljs-number">1</span>;<span class="hljs-comment">//img1中像素的权重  </span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; rows; i++)<font></font>
+    {<font></font>
+        uchar* p = img1.ptr&lt;uchar&gt;(i);  <span class="hljs-comment">//获取第i行的首地址</span><font></font>
+        uchar* t = trans.ptr&lt;uchar&gt;(i);<font></font>
+        uchar* d = dst.ptr&lt;uchar&gt;(i);<font></font>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = start; j &lt; cols; j++)<font></font>
+        {<font></font>
+            <span class="hljs-comment">//如果遇到图像trans中无像素的黑点，则完全拷贝img1中的数据</span>
+            <span class="hljs-keyword">if</span> (t[j * <span class="hljs-number">3</span>] == <span class="hljs-number">0</span> &amp;&amp; t[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] == <span class="hljs-number">0</span> &amp;&amp; t[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] == <span class="hljs-number">0</span>)<font></font>
+            {<font></font>
+                alpha = <span class="hljs-number">1</span>;<font></font>
+            }<font></font>
+            <span class="hljs-keyword">else</span><font></font>
+            {<font></font>
+                <span class="hljs-comment">//img1中像素的权重，与当前处理点距重叠区域左边界的距离成正比，实验证明，这种方法确实好  </span><font></font>
+                alpha = (processWidth - (j - start)) / processWidth;<font></font>
+            }<font></font>
+<font></font>
+            d[j * <span class="hljs-number">3</span>] = p[j * <span class="hljs-number">3</span>] * alpha + t[j * <span class="hljs-number">3</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+            d[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] = p[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] * alpha + t[j * <span class="hljs-number">3</span> + <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+            d[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] = p[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] * alpha + t[j * <span class="hljs-number">3</span> + <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span> - alpha);<font></font>
+<font></font>
+        }<font></font>
+    }<font></font>
+<font></font>
+}</code></pre>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">看一看拼接效果，我覺得還是不錯的。</font></font></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154629152-1101551803.png"></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154650761-693802456.png"></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154706636-1756490695.png"></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">看一下這一組圖片，這組圖片產生了鬼影，為什麼？</font><font style="vertical-align: inherit;">因為兩幅圖中的人物走動了啊！</font><font style="vertical-align: inherit;">所以要做圖像拼接，盡量保證使用的是靜態圖片，不要加入一些動態因素干擾拼接。</font></font></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154718027-805234486.png"></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154727636-1873510992.png"></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154736230-1197649063.png"></p>
+<h2 id="opencv自带的拼接算法stitch"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">opencv自帶的拼接算法stitch</font></font></h2>
+<p>opencv其实自己就有实现图像拼接的算法，当然效果也是相当好的，但是因为其实现很复杂，而且代码量很庞大，其实在一些小应用下的拼接有点杀鸡用牛刀的感觉。最近在阅读sticth源码时，发现其中有几个很有意思的地方。</p>
+<h3 id="opencv-stitch选择的特征检测方式">1.opencv stitch选择的特征检测方式</h3>
+<p>一直很好奇opencv stitch算法到底选用了哪个算法作为其特征检测方式，是ORB，SIFT还是SURF？读源码终于看到答案。</p>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> HAVE_OPENCV_NONFREE</span>
+        stitcher.setFeaturesFinder(<span class="hljs-keyword">new</span> detail::SurfFeaturesFinder());
+<span class="hljs-meta">#<span class="hljs-meta-keyword">else</span></span>
+        stitcher.setFeaturesFinder(<span class="hljs-keyword">new</span> detail::OrbFeaturesFinder());
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></code></pre>
+<p>在源码createDefault函数中（默认设置），第一选择是SURF,第二选择才是ORB（没有NONFREE模块才选），所以既然大牛们这么选择，必然是经过综合考虑的，所以应该SURF算法在图像拼接有着更优秀的效果。</p>
+<h3 id="opencv-stitch获取匹配点的方式">2.opencv stitch获取匹配点的方式</h3>
+<p>以下代码是opencv stitch源码中的特征点提取部分，作者使用了两次特征点提取的思路：先对图一进行特征点提取和筛选匹配（1-&gt;2），再对图二进行特征点的提取和匹配（2-&gt;1），这跟我们平时的一次提取的思路不同，这种二次提取的思路可以保证更多的匹配点被选中，匹配点越多，findHomography求出的变换越准确。这个思路值得借鉴。</p>
+<pre><code class="hljs cpp"><font></font>
+matches_info.matches.clear();<font></font>
+<font></font>
+Ptr&lt;flann::IndexParams&gt; indexParams = <span class="hljs-keyword">new</span> flann::KDTreeIndexParams();<font></font>
+Ptr&lt;flann::SearchParams&gt; searchParams = <span class="hljs-keyword">new</span> flann::SearchParams();<font></font>
+<font></font>
+<span class="hljs-keyword">if</span> (features2.descriptors.depth() == CV_8U)<font></font>
+{<font></font>
+    indexParams-&gt;setAlgorithm(cvflann::FLANN_INDEX_LSH);<font></font>
+    searchParams-&gt;setAlgorithm(cvflann::FLANN_INDEX_LSH);<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-function">FlannBasedMatcher <span class="hljs-title">matcher</span><span class="hljs-params">(indexParams, searchParams)</span></span>;
+<span class="hljs-built_in">vector</span>&lt; <span class="hljs-built_in">vector</span>&lt;DMatch&gt; &gt; pair_matches;<font></font>
+MatchesSet matches;<font></font>
+<font></font>
+<span class="hljs-comment">// Find 1-&gt;2 matches</span>
+matcher.knnMatch(features1.descriptors, features2.descriptors, pair_matches, <span class="hljs-number">2</span>);
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i = <span class="hljs-number">0</span>; i &lt; pair_matches.size(); ++i)<font></font>
+{<font></font>
+    <span class="hljs-keyword">if</span> (pair_matches[i].size() &lt; <span class="hljs-number">2</span>)
+        <span class="hljs-keyword">continue</span>;
+    <span class="hljs-keyword">const</span> DMatch&amp; m0 = pair_matches[i][<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">const</span> DMatch&amp; m1 = pair_matches[i][<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">if</span> (m0.distance &lt; (<span class="hljs-number">1.f</span> - match_conf_) * m1.distance)<font></font>
+    {<font></font>
+        matches_info.matches.push_back(m0);<font></font>
+        matches.insert(make_pair(m0.queryIdx, m0.trainIdx));<font></font>
+    }<font></font>
+}<font></font>
+LOG(<span class="hljs-string">"\n1-&gt;2 matches: "</span> &lt;&lt; matches_info.matches.size() &lt;&lt; <span class="hljs-built_in">endl</span>);<font></font>
+<font></font>
+<span class="hljs-comment">// Find 2-&gt;1 matches</span><font></font>
+pair_matches.clear();<font></font>
+matcher.knnMatch(features2.descriptors, features1.descriptors, pair_matches, <span class="hljs-number">2</span>);
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">size_t</span> i = <span class="hljs-number">0</span>; i &lt; pair_matches.size(); ++i)<font></font>
+{<font></font>
+    <span class="hljs-keyword">if</span> (pair_matches[i].size() &lt; <span class="hljs-number">2</span>)
+        <span class="hljs-keyword">continue</span>;
+    <span class="hljs-keyword">const</span> DMatch&amp; m0 = pair_matches[i][<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">const</span> DMatch&amp; m1 = pair_matches[i][<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">if</span> (m0.distance &lt; (<span class="hljs-number">1.f</span> - match_conf_) * m1.distance)
+        <span class="hljs-keyword">if</span> (matches.find(make_pair(m0.trainIdx, m0.queryIdx)) == matches.end())<font></font>
+            matches_info.matches.push_back(DMatch(m0.trainIdx, m0.queryIdx, m0.distance));<font></font>
+}<font></font>
+LOG(<span class="hljs-string">"1-&gt;2 &amp; 2-&gt;1 matches: "</span> &lt;&lt; matches_info.matches.size() &lt;&lt; <span class="hljs-built_in">endl</span>);</code></pre>
+<p>这里我仿照opencv源码二次提取特征点的思路对我原有拼接代码进行改写，实验证明获取的匹配点确实较一次提取要多。</p>
+<pre><code class="hljs cpp"><span class="hljs-comment">//提取特征点    </span>
+<span class="hljs-function">SiftFeatureDetector <span class="hljs-title">Detector</span><span class="hljs-params">(<span class="hljs-number">1000</span>)</span></span>;  <span class="hljs-comment">// 海塞矩阵阈值，在这里调整精度，值越大点越少，越精准 </span>
+<span class="hljs-built_in">vector</span>&lt;KeyPoint&gt; keyPoint1, keyPoint2;<font></font>
+Detector.detect(image1, keyPoint1);<font></font>
+Detector.detect(image2, keyPoint2);<font></font>
+<font></font>
+<span class="hljs-comment">//特征点描述，为下边的特征点匹配做准备    </span><font></font>
+SiftDescriptorExtractor Descriptor;<font></font>
+Mat imageDesc1, imageDesc2;<font></font>
+Descriptor.compute(image1, keyPoint1, imageDesc1);<font></font>
+Descriptor.compute(image2, keyPoint2, imageDesc2);<font></font>
+<font></font>
+FlannBasedMatcher matcher;<font></font>
+<span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;DMatch&gt; &gt; matchePoints;
+<span class="hljs-built_in">vector</span>&lt;DMatch&gt; GoodMatchePoints;<font></font>
+<font></font>
+MatchesSet matches;<font></font>
+<font></font>
+<span class="hljs-built_in">vector</span>&lt;Mat&gt; train_desc(<span class="hljs-number">1</span>, imageDesc1);<font></font>
+matcher.add(train_desc);<font></font>
+matcher.train();<font></font>
+<font></font>
+matcher.knnMatch(imageDesc2, matchePoints, <span class="hljs-number">2</span>);<font></font>
+<font></font>
+<span class="hljs-comment">// Lowe's algorithm,获取优秀匹配点</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; matchePoints.size(); i++)<font></font>
+{<font></font>
+    <span class="hljs-keyword">if</span> (matchePoints[i][<span class="hljs-number">0</span>].distance &lt; <span class="hljs-number">0.4</span> * matchePoints[i][<span class="hljs-number">1</span>].distance)<font></font>
+    {<font></font>
+        GoodMatchePoints.push_back(matchePoints[i][<span class="hljs-number">0</span>]);<font></font>
+        matches.insert(make_pair(matchePoints[i][<span class="hljs-number">0</span>].queryIdx, matchePoints[i][<span class="hljs-number">0</span>].trainIdx));<font></font>
+    }<font></font>
+}<font></font>
+<span class="hljs-built_in">cout</span>&lt;&lt;<span class="hljs-string">"\n1-&gt;2 matches: "</span> &lt;&lt; GoodMatchePoints.size() &lt;&lt; <span class="hljs-built_in">endl</span>;<font></font>
+<font></font>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">if</span> 1</span><font></font>
+<font></font>
+FlannBasedMatcher matcher2;<font></font>
+matchePoints.clear();<font></font>
+<span class="hljs-built_in">vector</span>&lt;Mat&gt; train_desc2(<span class="hljs-number">1</span>, imageDesc2);<font></font>
+matcher2.add(train_desc2);<font></font>
+matcher2.train();<font></font>
+<font></font>
+matcher2.knnMatch(imageDesc1, matchePoints, <span class="hljs-number">2</span>);
+<span class="hljs-comment">// Lowe's algorithm,获取优秀匹配点</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; matchePoints.size(); i++)<font></font>
+{<font></font>
+    <span class="hljs-keyword">if</span> (matchePoints[i][<span class="hljs-number">0</span>].distance &lt; <span class="hljs-number">0.4</span> * matchePoints[i][<span class="hljs-number">1</span>].distance)<font></font>
+    {<font></font>
+        <span class="hljs-keyword">if</span> (matches.find(make_pair(matchePoints[i][<span class="hljs-number">0</span>].trainIdx, matchePoints[i][<span class="hljs-number">0</span>].queryIdx)) == matches.end())<font></font>
+        {<font></font>
+            GoodMatchePoints.push_back(DMatch(matchePoints[i][<span class="hljs-number">0</span>].trainIdx, matchePoints[i][<span class="hljs-number">0</span>].queryIdx, matchePoints[i][<span class="hljs-number">0</span>].distance));<font></font>
+        }<font></font>
+        <font></font>
+    }<font></font>
+}<font></font>
+<span class="hljs-built_in">cout</span>&lt;&lt;<span class="hljs-string">"1-&gt;2 &amp; 2-&gt;1 matches: "</span> &lt;&lt; GoodMatchePoints.size() &lt;&lt; <span class="hljs-built_in">endl</span>;
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></code></pre>
+<p>最后再看一下opencv stitch的拼接效果吧~速度虽然比较慢，但是效果还是很好的。</p>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;opencv2/core/core.hpp&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;opencv2/highgui/highgui.hpp&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;opencv2/imgproc/imgproc.hpp&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;opencv2/stitching/stitcher.hpp&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> cv;
+<span class="hljs-keyword">bool</span> try_use_gpu = <span class="hljs-literal">false</span>;
+<span class="hljs-built_in">vector</span>&lt;Mat&gt; imgs;
+<span class="hljs-built_in">string</span> result_name = <span class="hljs-string">"dst1.jpg"</span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> * argv[])</span>
+</span>{<font></font>
+    Mat img1 = imread(<span class="hljs-string">"34.jpg"</span>);<font></font>
+    Mat img2 = imread(<span class="hljs-string">"35.jpg"</span>);<font></font>
+<font></font>
+    imshow(<span class="hljs-string">"p1"</span>, img1);<font></font>
+    imshow(<span class="hljs-string">"p2"</span>, img2);<font></font>
+<font></font>
+    <span class="hljs-keyword">if</span> (img1.empty() || img2.empty())<font></font>
+    {<font></font>
+        <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"Can't read image"</span> &lt;&lt; <span class="hljs-built_in">endl</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<font></font>
+    }<font></font>
+    imgs.push_back(img1);<font></font>
+    imgs.push_back(img2);<font></font>
+<font></font>
+<font></font>
+    Stitcher stitcher = Stitcher::createDefault(try_use_gpu);<font></font>
+    <span class="hljs-comment">// 使用stitch函数进行拼接</span><font></font>
+    Mat pano;<font></font>
+    Stitcher::Status status = stitcher.stitch(imgs, pano);<font></font>
+    <span class="hljs-keyword">if</span> (status != Stitcher::OK)<font></font>
+    {<font></font>
+        <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"Can't stitch images, error code = "</span> &lt;&lt; <span class="hljs-keyword">int</span>(status) &lt;&lt; <span class="hljs-built_in">endl</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<font></font>
+    }<font></font>
+    imwrite(result_name, pano);<font></font>
+    Mat pano2 = pano.clone();<font></font>
+    <span class="hljs-comment">// 显示源图像，和结果图像</span>
+    imshow(<span class="hljs-string">"全景图像"</span>, pano);
+    <span class="hljs-keyword">if</span> (waitKey() == <span class="hljs-number">27</span>)
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<font></font>
+}</code></pre>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154805043-430469339.png"></p>
+<p><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/1093303-20170822154823308-950402280.png"></p>
+</div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="https://www.cnblogs.com/skyfsm/category/1000207.html" target="_blank">opencv探索</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(7411961,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/skyfsm/" target="_blank"><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/20170109193150.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/skyfsm/">Madcola</a><br>
+            <a href="https://home.cnblogs.com/u/skyfsm/followees">关注 - 30</a><br>
+            <a href="https://home.cnblogs.com/u/skyfsm/followers">粉丝 - 1290</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(7411961,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">18</span>
+    </div>
+    <div class="buryit" onclick="votePost(7411961,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="https://www.cnblogs.com/skyfsm/p/7401523.html" class="p_n_p_prefix">« </a> 上一篇：<a href="https://www.cnblogs.com/skyfsm/p/7401523.html" title="發佈於2017-08-20 21:28">OpenCV探索之路（二十三）：特征检测和特征匹配方法汇总</a><br><a href="https://www.cnblogs.com/skyfsm/p/7488053.html" class="p_n_p_prefix">» </a> 下一篇：<a href="https://www.cnblogs.com/skyfsm/p/7488053.html" title="發佈於2017-09-07 09:12">【STL深入理解】vector</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2017-08-22 15:49</span> <a href="https://www.cnblogs.com/skyfsm/">Madcola</a> 阅读(<span id="post_view_count">85248</span>) 评论(<span id="post_comment_count">67</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=7411961" rel="nofollow">编辑</a> <a href="https://www.cnblogs.com/skyfsm/p/7411961.html#" onclick="AddToWz(7411961);return false;">收藏</a></div>
+	</div>
+	<script src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/highlight.min.js.下載"></script><script>markdown_highlight();</script><script type="text/javascript">var allowComments=true,cb_blogId=327280,cb_entryId=7411961,cb_blogApp=currentBlogApp,cb_blogUserGuid='0615e00a-49d6-e611-845c-ac853d9f53ac',cb_entryCreatedDate='2017/8/22 15:49:00';loadViewCount(cb_entryId);var cb_postType=1;var isMarkdown=true;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"><div class="pager"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#!comments" onclick="commentManager.renderComments(1,50);return false;">&lt; Prev</a><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#!comments" onclick="commentManager.renderComments(1,50);return false;">1</a><span class="current">2</span></div></div>
+<br>
+<div class="feedback_area_title">评论列表</div>
+<div class="feedbackNoItems"></div>	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#3960457" class="layer">#51楼</a><a name="3960457" id="comment_anchor_3960457"></a>  <span class="comment_date">2018-04-25 08:29</span> <a id="a_comment_author_3960457" href="http://home.cnblogs.com/u/1384320/" target="_blank">微言大义2627</a> <a href="http://msg.cnblogs.com/send/%E5%BE%AE%E8%A8%80%E5%A4%A7%E4%B9%892627" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3960457" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#3885684" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3885684);">@</a>
+ellenayu<br>你好，我也在做多幅影像拼接，请问你实现了吗？楼主这个貌似只能做两幅吧</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3960457,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3960457,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#3971089" class="layer">#52楼</a><a name="3971089" id="comment_anchor_3971089"></a>  <span class="comment_date">2018-05-09 21:46</span> <a id="a_comment_author_3971089" href="http://home.cnblogs.com/u/1370352/" target="_blank">aldom</a> <a href="http://msg.cnblogs.com/send/aldom" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3971089" class="blog_comment_body">你好，这个代码的拼接效果十分优秀，但是我在多次运行程序之后产生了类似unhandled exception at 0x73D63EF2 in orb.exe:Microsoft C++ exception:cv::Exception at memory location 0x033DED28<br>这样的错误，我尝试了重新链接库，修复vs，重启软件以及系统，但是都没有起作用。请问一下有没有解决办法呢？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3971089,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3971089,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#3975306" class="layer">#53楼</a><a name="3975306" id="comment_anchor_3975306"></a>  <span class="comment_date">2018-05-16 10:51</span> <a id="a_comment_author_3975306" href="https://www.cnblogs.com/doitbull/" target="_blank">chaozding</a> <a href="http://msg.cnblogs.com/send/chaozding" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3975306" class="blog_comment_body">谢谢楼主，自己实现的简化版好理解多了，关键是实验图，很容易就理解了，代码也是按模块讲解，最后统一讲解，十分清楚。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3975306,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3975306,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3975306_avatar" style="display:none;">http://pic.cnblogs.com/face/879172/20160121204758.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#3975346" class="layer">#54楼</a><a name="3975346" id="comment_anchor_3975346"></a>  <span class="comment_date">2018-05-16 11:30</span> <a id="a_comment_author_3975346" href="https://www.cnblogs.com/doitbull/" target="_blank">chaozding</a> <a href="http://msg.cnblogs.com/send/chaozding" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3975346" class="blog_comment_body">opencv里面彩色图像默认是BGR吧，CV_RGB2GRAY应该改一下感觉。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3975346,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3975346,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3975346_avatar" style="display:none;">http://pic.cnblogs.com/face/879172/20160121204758.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4013132" class="layer">#55楼</a><a name="4013132" id="comment_anchor_4013132"></a>  <span class="comment_date">2018-07-05 13:13</span> <a id="a_comment_author_4013132" href="http://home.cnblogs.com/u/1426631/" target="_blank">云中之君</a> <a href="http://msg.cnblogs.com/send/%E4%BA%91%E4%B8%AD%E4%B9%8B%E5%90%9B" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4013132" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#3971089" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3971089);">@</a>
+aldom<br>现在知道了吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4013132,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4013132,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4020537" class="layer">#56楼</a><a name="4020537" id="comment_anchor_4020537"></a>  <span class="comment_date">2018-07-14 23:55</span> <a id="a_comment_author_4020537" href="http://home.cnblogs.com/u/1370352/" target="_blank">aldom</a> <a href="http://msg.cnblogs.com/send/aldom" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4020537" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4013132" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,4013132);">@</a>
+云中之君<br>大概是win32位的内存不够用，换成64位的就能解决大部分问题，不过还是有些会出问题</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4020537,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4020537,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4074885" class="layer">#57楼</a><a name="4074885" id="comment_anchor_4074885"></a>  <span class="comment_date">2018-09-24 11:00</span> <a id="a_comment_author_4074885" href="http://home.cnblogs.com/u/1496876/" target="_blank">阿杜依诺</a> <a href="http://msg.cnblogs.com/send/%E9%98%BF%E6%9D%9C%E4%BE%9D%E8%AF%BA" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4074885" class="blog_comment_body">博主，我想请教下，为什么算透视变换后的坐标是H*[x,y,z].T,而不是[x,y,z]*H？我在网上看到的公式是[u,v,w]=[x,y,z]*H,能给下你公式的出处吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4074885,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4074885,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4075202" class="layer">#58楼</a><a name="4075202" id="comment_anchor_4075202"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2018-09-25 08:38</span> <a id="a_comment_author_4075202" href="https://www.cnblogs.com/skyfsm/" target="_blank">Madcola</a> <a href="http://msg.cnblogs.com/send/Madcola" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4075202" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4074885" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,4074885);">@</a>
+阿杜依诺<br>因为我要得到的是[u,v,w]T，是列向量。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4075202,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4075202,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_4075202_avatar" style="display:none;">http://pic.cnblogs.com/face/1093303/20170109193150.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4095579" class="layer">#59楼</a><a name="4095579" id="comment_anchor_4095579"></a>  <span class="comment_date">2018-10-22 10:57</span> <a id="a_comment_author_4095579" href="https://www.cnblogs.com/radish-ai/" target="_blank">RadisMaster</a> <a href="http://msg.cnblogs.com/send/RadisMaster" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4095579" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#3975346" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3975346);">@</a>
+doitbull<br>都可以的，你看下源码里面，两种都有定义的</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4095579,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4095579,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4095586" class="layer">#60楼</a><a name="4095586" id="comment_anchor_4095586"></a>  <span class="comment_date">2018-10-22 11:00</span> <a id="a_comment_author_4095586" href="https://www.cnblogs.com/radish-ai/" target="_blank">RadisMaster</a> <a href="http://msg.cnblogs.com/send/RadisMaster" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4095586" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#3960457" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3960457);">@</a>
+微言大义2627<br>你说的多幅图像是指的上下左右各个方向的位移？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4095586,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4095586,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4100555" class="layer">#61楼</a><a name="4100555" id="comment_anchor_4100555"></a>  <span class="comment_date">2018-10-29 09:25</span> <a id="a_comment_author_4100555" href="http://home.cnblogs.com/u/1522609/" target="_blank">sdustrs</a> <a href="http://msg.cnblogs.com/send/sdustrs" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4100555" class="blog_comment_body">楼主您好，对于OptimizeSeam函数我有几个问题想请教一下。第一个是：为什么每次处理三个点那？<br>第二个是：为什么要用processWidth - (j - start)，直接用 (j - start)不行吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4100555,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4100555,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4113371" class="layer">#62楼</a><a name="4113371" id="comment_anchor_4113371"></a>  <span class="comment_date">2018-11-13 13:21</span> <a id="a_comment_author_4113371" href="https://www.cnblogs.com/jsxyhelu/" target="_blank">jsxyhelu</a> <a href="http://msg.cnblogs.com/send/jsxyhelu" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4113371" class="blog_comment_body">效果不错，不过拼接要至少做3相机拼接，因为两个图片和三个图片完全两把事；反之，三个做好了，后面五个七个就是量的变化</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4113371,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4113371,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4153337" class="layer">#63楼</a><a name="4153337" id="comment_anchor_4153337"></a>  <span class="comment_date">2019-01-02 09:14</span> <a id="a_comment_author_4153337" href="http://home.cnblogs.com/u/1388036/" target="_blank">273270381</a> <a href="http://msg.cnblogs.com/send/273270381" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4153337" class="blog_comment_body">楼主，你那两个for循环是不是很耗时，是否能适应摄像头拼接啊?</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4153337,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4153337,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4169356" class="layer">#64楼</a><a name="4169356" id="comment_anchor_4169356"></a>  <span class="comment_date">2019-01-23 17:26</span> <a id="a_comment_author_4169356" href="http://home.cnblogs.com/u/1590554/" target="_blank">我很忙2010</a> <a href="http://msg.cnblogs.com/send/%E6%88%91%E5%BE%88%E5%BF%992010" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4169356" class="blog_comment_body">楼主，OptimizeSeam函数中说img1中像素的权重，与当前处理点距重叠区域左边界的距离成正比，(j-start)是处理点与左边距的距离，最终processWidth - (j - start)是处理点与右边界的距离吧？还是说我哪里理解错了？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4169356,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4169356,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4191911" class="layer">#65楼</a><a name="4191911" id="comment_anchor_4191911"></a>  <span class="comment_date">2019-03-02 10:10</span> <a id="a_comment_author_4191911" href="https://www.cnblogs.com/211xun/" target="_blank">21ios</a> <a href="http://msg.cnblogs.com/send/21ios" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4191911" class="blog_comment_body">OpenCV实现SIFT图像拼接源代码,下载地址:<a href="http://www.211xun.com/download_page_1313_cn.html" target="_blank">http://www.211xun.com/download_page_1313_cn.html</a></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4191911,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4191911,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4195150" class="layer">#66楼</a><a name="4195150" id="comment_anchor_4195150"></a>  <span class="comment_date">2019-03-06 16:16</span> <a id="a_comment_author_4195150" href="https://www.cnblogs.com/pcbaby-ch/" target="_blank">余生一梦</a> <a href="http://msg.cnblogs.com/send/%E4%BD%99%E7%94%9F%E4%B8%80%E6%A2%A6" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4195150" class="blog_comment_body">请教个问题：我想提取A图片的发型然后替换到B图片上，2张图片都是人物照片，有点类似于换脸，这里是换发型，那么怎么做到B图片换发后，还可以保留B图片人物本身点脸型不变呢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4195150,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4195150,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4240847" class="layer">#67楼</a><a name="4240847" id="comment_anchor_4240847"></a><span id="comment-maxId" style="display:none;">4240847</span><span id="comment-maxDate" style="display:none;">2019/4/25 19:40:32</span>  <span class="comment_date">2019-04-25 19:40</span> <a id="a_comment_author_4240847" href="https://www.cnblogs.com/anymake/" target="_blank">Anymake</a> <a href="http://msg.cnblogs.com/send/Anymake" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_4240847" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#4113371" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,4113371);">@</a>
+jsxyhelu<br>那3个的应该怎么做呢？有什么特殊之处？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(4240847,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(4240847,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_4240847_avatar" style="display:none;">http://pic.cnblogs.com/face/620356/20140403202644.png</span>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"><div class="pager"><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#!comments" onclick="commentManager.renderComments(1,50);return false;">&lt; Prev</a><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#!comments" onclick="commentManager.renderComments(1,50);return false;">1</a><span class="current">2</span></div></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/skyfsm/p/7411961.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-工控&#39;)">【推荐】超50万C++/C#源码: 大型实时仿真组态图形源码</a><br><a href="https://www.grapecity.com.cn/developer/spreadjs?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=SpreadJS&amp;utm_campaign=community" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-SpreadJS&#39;)">【前端】SpreadJS表格控件，可嵌入系统开发的在线Excel</a><br><a href="https://gitee.com/enterprises?from=bky-1" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-gitee&#39;)">【推荐】码云企业版，高效的企业级软件协作开发管理平台</a><br><a href="https://q.cnblogs.com/" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-博问&#39;)">【推荐】程序员问答平台，解决您开发中遇到的技术难题</a><br></div>
+<div id="opt_under_post"></div>
+<script async="async" src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/gpt.js.下載"></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+<script>
+  googletag.cmd.push(function() {
+        googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1546353474406-0').addService(googletag.pubads());
+        googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+  });
+</script>
+<div id="cnblogs_c1" class="c_ad_block">
+    <div id="div-gpt-ad-1546353474406-0" style="height:250px; width:300px;" data-google-query-id="COjpy_r2teMCFZi7lgodyZYHfg"><div id="google_ads_iframe_/1090369/C1_0__container__" style="border: 0pt none; display: inline-block; width: 300px; height: 250px;"><iframe frameborder="0" src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/container.html" id="google_ads_iframe_/1090369/C1_0" title="3rd party ad content" name="" scrolling="no" marginwidth="0" marginheight="0" width="300" height="250" data-is-safeframe="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" data-google-container-id="1" style="border: 0px; vertical-align: bottom;" data-load-complete="true"></iframe></div></div>
+</div>
+<div id="under_post_news"><div class="recomm-block"><b>相关博文：</b><br>·  <a href="https://www.cnblogs.com/gmhappy/p/9472402.html" target="_blank" onclick="clickRecomItmem(9472402)">OpencvSift和Surf特征实现图像无缝拼接生成全景图像</a><br>·  <a href="https://www.cnblogs.com/jsxyhelu/p/6876461.html" target="_blank" onclick="clickRecomItmem(6876461)">基于OpenCV进行图像拼接原理解析和编码实现(提纲 代码和具体内容在课件中）</a><br>·  <a href="https://www.cnblogs.com/jukan/p/10139658.html" target="_blank" onclick="clickRecomItmem(10139658)">OpenCV探索之路（二十三）：特征检测和特征匹配方法汇总</a><br>·  <a href="https://www.cnblogs.com/cumtb3S/p/4868917.html" target="_blank" onclick="clickRecomItmem(4868917)">图像拼接 SIFT资料合集</a><br>·  <a href="https://www.cnblogs.com/skyfsm/p/6902524.html" target="_blank" onclick="clickRecomItmem(6902524)">OpenCV探索之路（十六）：图像矫正技术深入探讨</a><br></div></div>
+<div id="cnblogs_c2" class="c_ad_block">
+    <div id="div-gpt-ad-1539008685004-0" style="height:60px; width:468px;" data-google-query-id="COnpy_r2teMCFZi7lgodyZYHfg"><div id="google_ads_iframe_/1090369/C2_0__container__" style="border: 0pt none; display: inline-block; width: 320px; height: 50px;"><iframe frameborder="0" src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/container(1).html" id="google_ads_iframe_/1090369/C2_0" title="3rd party ad content" name="" scrolling="no" marginwidth="0" marginheight="0" width="320" height="50" data-is-safeframe="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" data-google-container-id="2" style="border: 0px; vertical-align: bottom;" data-load-complete="true"></iframe></div></div>
+</div>
+<div id="under_post_kb"><div class="itnews c_ad_block"><b><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最新新聞</font></font></b><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：</font></font><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">·   </font></font><a href="https://news.cnblogs.com/n/628244/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5G與物聯網的“床單革命”</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://news.cnblogs.com/n/628243/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">禍不單行！</font><font style="vertical-align: inherit;">被罰款50億美元後，Facebook還有一大波麻煩</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://news.cnblogs.com/n/628242/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">NASA警告：我們或將在有生之年目睹小行星撞擊地球</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://news.cnblogs.com/n/628241/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">英特爾修復了兩個新安全漏洞</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://news.cnblogs.com/n/628240/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">俄成功發射“光譜-RG”太空望遠鏡</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> » </font></font><a href="http://news.cnblogs.com/" title="IT新聞" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">更多新聞...</font></font></a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+ if(enablePostBottom()) {
+    codeHighlight();
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverT2();
+    deliverC1();
+    deliverC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);  
+}
+</script>
+</div>
+
+    
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">公告</font></font></h3>
+	<div id="blog-news"><div id="profile_block"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">暱稱：</font></font><a href="https://home.cnblogs.com/u/skyfsm/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Madcola</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">園齡：</font></font><a href="https://home.cnblogs.com/u/skyfsm/" title="入園時間：2017-01-09"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2年6個月</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">粉絲：</font></font><a href="https://home.cnblogs.com/u/skyfsm/followers/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1290</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">關注：</font></font><a href="https://home.cnblogs.com/u/skyfsm/followees/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">30</font></font></a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">+加關注</font></font></a></div><script>getFollowStatus('0615e00a-49d6-e611-845c-ac853d9f53ac')</script></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2019/06/01&#39;);return false;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">&lt;</font></font></a></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2019年7月</font></font></td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2019/08/01&#39;);return false;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">&gt;</font></font></a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">日</font></font></th><th class="CalDayHeader" align="center" abbr="一" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">一</font></font></th><th class="CalDayHeader" align="center" abbr="二" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">二</font></font></th><th class="CalDayHeader" align="center" abbr="三" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">三</font></font></th><th class="CalDayHeader" align="center" abbr="四" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">四</font></font></th><th class="CalDayHeader" align="center" abbr="五" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">五</font></font></th><th class="CalDayHeader" align="center" abbr="六" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">六</font></font></th></tr><tr><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">30</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5</font></font></td><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">6</font></font></td></tr><tr><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">7</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">9</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">11</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">12</font></font></td><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">13</font></font></td></tr><tr><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14</font></font></td><td class="CalTodayDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">15</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">16</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">17</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">18</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">19</font></font></td><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">20</font></font></td></tr><tr><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">21</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">22</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">23</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">24</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">25</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">26</font></font></td><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">27</font></font></td></tr><tr><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">28</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">29</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">30</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">31</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3</font></font></td></tr><tr><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">6</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">7</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">9</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10</font></font></td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">搜索</font></font></h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></font></font></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></font></font></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">常用鏈接</font></font></h3>
+<ul>
+<li><a href="https://www.cnblogs.com/skyfsm/p/" title="我的博客的隨筆列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我的隨筆</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/MyComments.html" title="我發表過的評論列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我的評論</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/OtherPosts.html" title="我評論過的隨筆列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我的參與</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/RecentComments.html" title="我的博客的評論列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最新評論</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/tag/" title="我的博客的標籤列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我的標籤</font></font></a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block"></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">隨筆分類</font></font><span style="font-size:11px;font-weight:normal"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">(69)</font></font></span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="https://www.cnblogs.com/skyfsm/category/1012247.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">C++(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="https://www.cnblogs.com/skyfsm/category/1304109.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CUDA(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="https://www.cnblogs.com/skyfsm/category/935270.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Linux編程(12)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="https://www.cnblogs.com/skyfsm/category/1123384.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OCR系列(8)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="https://www.cnblogs.com/skyfsm/category/1000207.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">opencv探索(28)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="https://www.cnblogs.com/skyfsm/category/1074227.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">STL(2)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="https://www.cnblogs.com/skyfsm/category/935280.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">波折歲月(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="https://www.cnblogs.com/skyfsm/category/1309644.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">工具技巧(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="https://www.cnblogs.com/skyfsm/category/993807.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">機器學習之旅(5)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="https://www.cnblogs.com/skyfsm/category/1164360.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">深度學習(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="https://www.cnblogs.com/skyfsm/category/1085234.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">數字圖像處理(3)</font></font></a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">隨筆檔案</font></font><span style="font-size:11px;font-weight:normal"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">(69)</font></font></span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="https://www.cnblogs.com/skyfsm/archive/2019/02.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2019年2月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="https://www.cnblogs.com/skyfsm/archive/2019/01.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2019年1月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="https://www.cnblogs.com/skyfsm/archive/2018/12.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年12月(2)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="https://www.cnblogs.com/skyfsm/archive/2018/10.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年10月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="https://www.cnblogs.com/skyfsm/archive/2018/09.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年9月(3)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="https://www.cnblogs.com/skyfsm/archive/2018/05.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年5月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="https://www.cnblogs.com/skyfsm/archive/2018/04.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年4月(2)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="https://www.cnblogs.com/skyfsm/archive/2018/02.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年2月(6)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="https://www.cnblogs.com/skyfsm/archive/2018/01.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年1月(3)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_9" href="https://www.cnblogs.com/skyfsm/archive/2017/12.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年12月(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_10" href="https://www.cnblogs.com/skyfsm/archive/2017/11.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年11月(3)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_11" href="https://www.cnblogs.com/skyfsm/archive/2017/10.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年10月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_12" href="https://www.cnblogs.com/skyfsm/archive/2017/09.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年9月(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_13" href="https://www.cnblogs.com/skyfsm/archive/2017/08.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年8月(3)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_14" href="https://www.cnblogs.com/skyfsm/archive/2017/07.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年7月(5)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_15" href="https://www.cnblogs.com/skyfsm/archive/2017/06.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年6月(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_16" href="https://www.cnblogs.com/skyfsm/archive/2017/05.html">2017年5月 (17)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_17" href="https://www.cnblogs.com/skyfsm/archive/2017/04.html">2017年4月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_18" href="https://www.cnblogs.com/skyfsm/archive/2017/02.html">2017年2月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_19" href="https://www.cnblogs.com/skyfsm/archive/2017/01.html">2017年1月 (5)</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_scorerank" class="sidebar-block">
+<div class="catListBlogRank">
+<h3 class="catListTitle">积分与排名</h3>
+<ul>
+	<li class="liScore">
+		积分 -	211604
+	</li>
+	<li class="liRank">
+		排名 -	1722
+	</li>
+</ul>
+</div>
+
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/10345305.html#4298249">1. Re:【OCR技术系列之八】端到端不定长文本识别CRNN代码实现</a></li>
+        <li class="recent_comment_body">CNN用的是VGG16吗？为什么层数有点不太一样啊？</li>
+        <li class="recent_comment_author">--明天周六了</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/10345305.html#4297958">2. Re:【OCR技术系列之八】端到端不定长文本识别CRNN代码实现</a></li>
+        <li class="recent_comment_body">楼主你好，想问下您是如何利用图像处理技术手工大批量生成文字图像的呢？有看过您用图像处理方法生成单字的博文，但对于生成这种不定长文本行的并且背景也有所不同的训练数据，请问您是怎么做到的呢，谢谢您啦</li>
+        <li class="recent_comment_author">--MrZWJax</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/8330882.html#4297177">3. Re:【Keras】基于SegNet和U-Net的遥感图像语义分割</a></li>
+        <li class="recent_comment_body">@学艺from keras import backend as K K.set_image_dim_ordering('th') 在文件开头加上这个原因算 你用的TensorFlow 博主用的..........</li>
+        <li class="recent_comment_author">--星星之火250</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/8330882.html#4297095">4. Re:【Keras】基于SegNet和U-Net的遥感图像语义分割</a></li>
+        <li class="recent_comment_body">@Tripader 在预测代码 那块， 其中分割256*256*3的 逻辑上 你没有遇到问题吗？...</li>
+        <li class="recent_comment_author">--星星之火250</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/8330882.html#4296883">5. Re:【Keras】基于SegNet和U-Net的遥感图像语义分割</a></li>
+        <li class="recent_comment_body">请问segnet训练时报错ValueError:y contains precviously unseen labels怎么解决？</li>
+        <li class="recent_comment_author">--wenny-bell</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/6790245.html">1. 卷积神经网络CNN总结(216491)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6806246.html">2. 基于深度学习的目标检测技术演进：R-CNN、Fast R-CNN、Faster R-CNN(203795)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html">3. OpenCV探索之路（二十四）图像拼接和图像融合技术(85243)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8451834.html">4. CNN网络架构演进：从LeNet到DenseNet(54857)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7401523.html">5. OpenCV探索之路（二十三）：特征检测和特征匹配方法汇总(51954)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">6. 【OCR技術系列之四】基於深度學習的文字識別（3755個漢字）(48354)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6934246.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">7. C++ STL快速入門(45015)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6879265.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8. OpenCV探索之路（六）：邊緣檢測（canny、sobel、laplacian）(44106)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6287787.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">9. Linux編程之UDP SOCKET全攻略(40489)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6897313.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10. OpenCV探索之路（十四）：繪製點、直線、幾何圖形(36102)</font></font></a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">評論排行榜</font></font></h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1. 【OCR技術系列之四】基於深度學習的文字識別（3755個漢字）(77)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8330882.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2. 【Keras】基於SegNet和U-Net的遙感圖像語義分割(69)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3. OpenCV探索之路（二十四）圖像拼接和圖像融合技術(67)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/10345305.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4. 【OCR技術系列之八】端到端不定長文本識別CRNN代碼實現(51)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8051705.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5. 【Keras】從兩個實際任務掌握圖像分類(33)</font></font></a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">推薦排行榜</font></font></h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/6806246.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1. 基於深度學習的目標檢測技術演進：R-CNN、Fast R-CNN、Faster R-CNN(88)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6790245.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2. 卷積神經網絡CNN總結(60)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3. 【OCR技術系列之四】基於深度學習的文字識別（3755個漢字）(21)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/10202575.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4. 我的2018：OCR、實習和秋招(20)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8330882.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5. 【Keras】基於SegNet和U-Net的遙感圖像語義分割(19)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8451834.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">6. CNN網絡架構演進：從LeNet到DenseNet(18)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">7. OpenCV探索之路（二十四）圖像拼接和圖像融合技術(18)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/9613894.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8. 我在北京實習的四個月(15)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8088158.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">9. 讀研以來的一些感想：名校好在哪裡？</font><font style="vertical-align: inherit;">(13)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7923015.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10. 【OCR技術系列之一】字符識別技術總覽(12)</font></font></a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done--><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+Copyright ©2019 Madcola
+	</font></font></div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+
+<div id="goog-gt-tt" class="skiptranslate" dir="ltr"><div style="padding: 8px;"><div><div class="logo"><img src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/translate_24dp.png" width="20" height="20" alt="Google 翻譯"></div></div></div><div class="top" style="padding: 8px; float: left; width: 100%;"><h1 class="title gray">原文</h1></div><div class="middle" style="padding: 8px;"><div class="original-text"></div></div><div class="bottom" style="padding: 8px;"><div class="activity-links"><span class="activity-link">建議更好的譯法</span><span class="activity-link"></span></div><div class="started-activity-container"><hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;"><div class="activity-root"></div></div></div><div class="status-message" style="display: none;"></div></div><iframe id="google_osd_static_frame_1408604716675" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;" src="./OpenCV探索之路（二十四）图像拼接和图像融合技术 - Madcola - 博客园_files/saved_resource(1).html"></iframe><div class="goog-te-spinner-pos"><div class="goog-te-spinner-animation"><svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px" height="96px" viewBox="0 0 66 66"><circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle></svg></div></div></body></html>
