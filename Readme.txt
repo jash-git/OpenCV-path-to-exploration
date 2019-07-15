@@ -36,4 +36,16 @@
 	Opencv探索之路（二十）：製作一個簡易手動圖像配準工具
 		-https://www.cnblogs.com/skyfsm/p/7253208.html
 	
+	Opencv探索之路（十九）：讀寫xml和yml文件
+		-https://www.cnblogs.com/skyfsm/p/7182313.html
+	
+	OpenCV探索之路（十八）：使用imwrite調整保存的圖片質量
+		-https://www.cnblogs.com/skyfsm/p/7136709.html
+		
+	OpenCV探索之路（十七）：Mat和IplImage訪問像素的方法總結
+		-https://www.cnblogs.com/skyfsm/p/7082914.html
+	
+	OpenCV探索之路（十六）：圖像矯正技術深入探討
+		-https://www.cnblogs.com/skyfsm/p/6902524.html
+		-要進行進行圖像矯正，至少有以下幾項知識儲備：輪廓提取技術、霍夫變換知識、ROI感興趣區域知識
 	
