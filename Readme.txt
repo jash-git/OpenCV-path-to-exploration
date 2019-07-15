@@ -49,3 +49,20 @@
 		-https://www.cnblogs.com/skyfsm/p/6902524.html
 		-要進行進行圖像矯正，至少有以下幾項知識儲備：輪廓提取技術、霍夫變換知識、ROI感興趣區域知識
 	
+	OpenCV探索之路（十五）：角點檢測
+		-https://www.cnblogs.com/skyfsm/p/6899627.html
+		-方法種類:Harris、Shi-Tomasi
+
+	OpenCV探索之路（十四）：繪製點、直線、幾何圖形
+		-https://www.cnblogs.com/skyfsm/p/6897313.html
+		
+	OpenCV探索之路（十三）：詳解掩膜[遮罩]mask
+		-https://www.cnblogs.com/skyfsm/p/6894685.html
+		
+	Opencv探索之路（十二）：感興趣區域ROI和logo添加技術
+		-https://www.cnblogs.com/skyfsm/p/6892746.html
+		
+	OpenCV探索之路（十一）：輪廓查找和多邊形包圍輪廓
+		-https://www.cnblogs.com/skyfsm/p/6890863.html
+	
+	

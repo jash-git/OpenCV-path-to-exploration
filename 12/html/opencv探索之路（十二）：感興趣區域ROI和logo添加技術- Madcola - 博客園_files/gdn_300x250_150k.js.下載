@@ -1,0 +1,831 @@
+(function (lib, img, cjs, ss, an) {
+
+var p; // shortcut to reference prototypes
+lib.ssMetadata = [];
+
+
+// symbols:
+
+
+
+(lib.BG = function() {
+	this.initialize(img.BG);
+}).prototype = p = new cjs.Bitmap();
+p.nominalBounds = new cjs.Rectangle(0,0,300,250);
+
+
+(lib.coffee = function() {
+	this.initialize(img.coffee);
+}).prototype = p = new cjs.Bitmap();
+p.nominalBounds = new cjs.Rectangle(0,0,201,131);
+
+
+(lib.glass = function() {
+	this.initialize(img.glass);
+}).prototype = p = new cjs.Bitmap();
+p.nominalBounds = new cjs.Rectangle(0,0,98,147);
+
+
+(lib.pillow = function() {
+	this.initialize(img.pillow);
+}).prototype = p = new cjs.Bitmap();
+p.nominalBounds = new cjs.Rectangle(0,0,112,98);
+
+
+(lib.title = function() {
+	this.initialize(img.title);
+}).prototype = p = new cjs.Bitmap();
+p.nominalBounds = new cjs.Rectangle(0,0,238,62);
+
+
+(lib.tv = function() {
+	this.initialize(img.tv);
+}).prototype = p = new cjs.Bitmap();
+p.nominalBounds = new cjs.Rectangle(0,0,214,136);// helper functions:
+
+function mc_symbol_clone() {
+	var clone = this._cloneProps(new this.constructor(this.mode, this.startPosition, this.loop));
+	clone.gotoAndStop(this.currentFrame);
+	clone.paused = this.paused;
+	clone.framerate = this.framerate;
+	return clone;
+}
+
+function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
+	var prototype = cjs.extend(symbol, cjs.MovieClip);
+	prototype.clone = mc_symbol_clone;
+	prototype.nominalBounds = nominalBounds;
+	prototype.frameBounds = frameBounds;
+	return prototype;
+	}
+
+
+(lib.電視指定機種 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#3D3A3A").s().p("AgoBAIAAg6QgEAKgFAJIgJAOIgDgGIgEgFIAIgMIAIgOIAHgPIgVAAIAAgMIAXAAIAAgTIgKABIgJABIgCgFIgDgEIAQgDIAQgFIAMgEIAJAKIgIADIgJACIAAAXIAQAAIAAAMIgQAAIAAAHIAGAGIAIAGIAFAFIgIALIgFgIIgGgJIAAA7gAgSA+IAAgLIAlAAIAAgKIgdAAIAAgKIAdAAIAAgIIgcAAIAAgtIAcAAIAAgIIggAAIAAgKIAgAAIAAgIIgPAAIgNABIgBgFIgCgFIAYgBIAXgCIAUgDIAHAKIgOACIgRACIAAAJIAgAAIAAAKIggAAIAAAIIAdAAIAAAtIgdAAIAAAIIAeAAIAAAKIgeAAIAAAKIAjAAIAAALgAAfANIASAAIAAgJIgSAAgAACANIARAAIAAgJIgRAAgAAfgDIASAAIAAgKIgSAAgAACgDIARAAIAAgKIgRAAg");
+	this.shape.setTransform(36.9,0.7);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#3D3A3A").s().p("AgdA9IgEgEQAIgGAEgHQAEgHACgGIABgOIgKAAIAAgKIAoAAIgEggIgCgmIALAAIACAmIAEAgIARAAIgFgEIgFgDIAGgFIgHACIgDABIgBgDIgBgEIgBgDIADgCIADgEIAEgEIAEgHIgHABIgEAAIgCABIgBgEIgCgGQAAAAAAAAQABAAAAAAQAAAAABAAQAAgBAAAAIADgDIACgFIAEgIIADgJIAKADIgFAMIgHALIAJgBIACgFIACgEIAKADIgJAQIgLAPIAMgCIgCgEIgBgDIAIgDIACAHIADAIIACAGIgIADIgBgDIgBgDIgHABIgGABIAIAEIAFAFIgDADIALAAIAAAKIghAAIADAJIACAIIAHgIIAEgIIALAEIgHAMIgJAKIAGAGQADABADABQABAAAAAAQABAAAAgBQAAAAABgBQAAgBAAAAIADgMIAEAEIAEACQgBAJgCAEQgDAFgCACQgDACgDgBQgGAAgGgDQgFgEgEgFIgLAHIgNAFIgDgEIgEgFIAOgFIAMgIIgFgLIgDgOIgUAAIAAACIgBADIAGAFIAHAGIAFAFIgIAIIgFgFIgHgHQgBAIgFAJQgFAHgJAHIgEgEgAgwBAIAAg8IgGARIgGAOIgCgHIgDgGIAGgOIAGgQIAEgSIgNAAIAAgLIAOAAIAAgbIALAAIAAAbIALAAIAAALIgLAAIAAAIIAEAIIAGAIIADAEIgGAKIgDgHIgEgHIAABCgAADgBIAAgDIgNACIgHABIgDABIgCgEIgCgGQABAAAAAAQABAAAAAAQABAAAAgBQAAAAABAAIAEgFIADgEIAFgIIgIACIgEAAIgCABIgBgEIgCgFIADgCIACgDIADgFIAEgJIAEgKIAJADIgFAOIgHALIAJgBIACgEIABgFIAKADIgKAQIgKAPIAKgBIAAgFIgBgDIAHgCIADAGIACAIIACAGIgJACIgBgBg");
+	this.shape_1.setTransform(21.9,0.6);
+
+	this.shape_2 = new cjs.Shape();
+	this.shape_2.graphics.f("#3D3A3A").s().p("Ag5A/IgDgDIgEgDQAMgJAFgOQAHgPABgSIAOABIgCAJIgCAJQAEAKAGAGQAGAGAHADIAAg1IghAAIAAgMIBPAAIAAAMIghAAIAAAUIAoAAIAAAMIgoAAIAAAZIAKABIAKAAIAIAAIALAAIAKAAIAJAAIgDAGIgCAHIghAAQgOAAgMgCQgLgCgIgGQgJgGgGgLQgEAJgFAIQgFAHgGAGIgEgDgAAugQIAAgUIhbAAIAAAUIgNAAIAAggIA1AAIgCgHIgDgGIAMgEIAEAJIAEAIIAxAAIAAAgg");
+	this.shape_2.setTransform(7,0.5);
+
+	this.shape_3 = new cjs.Shape();
+	this.shape_3.graphics.f("#3D3A3A").s().p("AgHBBIAAg/IBDAAIAAA+IgOAAIAAgGIgpAAIAAAHgAAFAwIApAAIAAgNIgpAAgAAFAZIApAAIAAgMIgpAAgAg5A7IgDgGIAJAAIAGAAIABgBIABgCIAAgiIgJACIgJADIgDgNIAKgCIALgDIAAgbIgTAAIAAgNIATAAIAAgbIANAAIAAAbIAPAAIAAANIgPAAIAAAYIAPgEIACALIgRAFIAAAmIgBAIQgBADgDABIgJACIgLABIgCgGgAAMgHQgHAAgFgCQgEgCgCgEQgCgEAAgHIAAgmIAMAAIAAAQIA5AAIAAAMIg5AAIAAAKQAAAEACACQACABAEAAIAjAAIAGAAIAGAAIAFgBIAAAGIABAGIgHAAIgKABg");
+	this.shape_3.setTransform(-8.1,0.6);
+
+	this.shape_4 = new cjs.Shape();
+	this.shape_4.graphics.f("#3D3A3A").s().p("AgRA8IgEgFQALgDAHgFQAEgGADgHQADgHAAgJIgKAAIAAhMIA9AAIAABMIgQAAIAAAeIAAAEIACAAIAIAAQAAAAABAAQAAAAAAAAQABAAAAAAQAAAAAAgBIABgFIABgLIAEADIAHACQgBAKgBAFQgCAFgDACQgCACgFAAIgLAAQgHAAgDgDQgCgEAAgJIAAgeIgLAAQAAALgEAJQgDAJgHAHQgGAHgMAEIgEgFgAAIAHIAlAAIAAgLIglAAgAAIgOIAlAAIAAgMIglAAgAAIgkIAlAAIAAgMIglAAgAgqBAIAAg2IgJAHIgJAHIgCgFIgCgFIgCgDQAIgFAHgGIANgNQAGgHAFgJIgjAAIAAgMIAaAAIgFgIIgHgJIAKgGIAIAJIAGAJIgJAFIANAAIACAAIAHAFQgDAIgEAHQgEAIgGAHIAHAGIAIAGIAFAFIgJALIgFgHIgIgJIAAA6g");
+	this.shape_4.setTransform(-23,0.6);
+
+	this.shape_5 = new cjs.Shape();
+	this.shape_5.graphics.f("#3D3A3A").s().p("AAMA+QgIAAgEgCQgFgBgCgEQgCgDAAgHIAAgCIgcAAIAAAGIgMAAIAAgxIBfAAIAAArIgrAAIAAACQgBAEADABQACABAGAAIAdAAIAGgBQACgBABgDIABgKIAFACIAGACQgBAIgCAFQgCAFgEABQgEADgHAAgAADAiIAeAAIAAgJIgeAAgAglAiIAcAAIAAgJIgcAAgAADARIAeAAIAAgIIgeAAgAglARIAcAAIAAgIIgcAAgAAfgGIgLgCIgMgDIADgHIALACIAMACIAJACIgCAJIgKgDgAgwgNIAPgCIASgCIABAIIgQADIgPADgAgIgEIAAgfIgpAAIAAAWIgNAAIAAgfIA2AAIAAgIIgwAAIAAgJIBrAAIAAAJIgwAAIAAAIIA3AAIAAAfIgNAAIAAgWIgqAAIAAAfgAgagWIgJgDIgJgBIADgIIAKACIAJADIAHADIgDAHIgIgDgAAKgaIAIgCIAJgEIAIgCIAGAHIgJADIgJACIgJACg");
+	this.shape_5.setTransform(-37.8,0.8);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_5},{t:this.shape_4},{t:this.shape_3},{t:this.shape_2},{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.電視指定機種, new cjs.Rectangle(-47.2,-12.5,94.4,25.2), null);
+
+
+(lib.立即了解 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FCFFFF").s().p("Ag0AwQAIgMAAgdIAAgSIgBACIgIgHQAMgNAGgXIAKACIgDAIIAOAAIAGAEIgHAPIAOAAIAAAIQANgGADgQIgPAAIAAgJIAsAAIAAAAIAHAAIgBADQAAAagEADQgCAEgFAAIgMAAQAAgEgCgEIAKAAQAAAAABAAQAAAAABAAQAAAAAAgBQABAAAAAAQACgCABgQIgQAAQgEAXgSAHIgEgGIAAAeQAFgJAEgQIAJACIgCAGIAHAAIAAgJIALAAIAAAJIATAAIAAAKIgTAAIAAAMIAVAAIAAAKIgVAAIAAAUIgLAAIAAgUIgWAAIAAgKIAWAAIAAgMIgLAAQgCAGgEAFQgDgDgDgBIAAAZQAAAGgEADQgEABgMAAIgDgIIAMAAQAAAAABgBQAAAAAAAAQABAAAAgBQAAAAAAAAIAAgUIgaAAQgCAVgGAKgAgTAPIAJAAIAAgMIgJAAgAgjAPIAJAAIAAgMIgJAAgAgTgEIAJAAIAAgLIgJAAgAgjgEIAJAAIAAgLIgJAAgAgkgXIAMAAIAEgLIgLAAg");
+	this.shape.setTransform(18,0.1,1.037,1.037);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FCFFFF").s().p("AgYAxQgBgFgDgGQAQABAFgBQAAAAABAAQABAAAAAAQABAAAAgBQAAAAAAgBIAAg0QAQgJAMgMIhFAAIAAgKIBQAAIADgBIAIAGQgQASgYANIAAAvQAAAJgGACQgGACgLAAIgHAAg");
+	this.shape_1.setTransform(5.9,0.4,1.037,1.037);
+
+	this.shape_2 = new cjs.Shape();
+	this.shape_2.graphics.f("#FCFFFF").s().p("AAKAyIAAhiIAnAAIAABBQAAAIgEACQgEACgNAAIgDgKQAJABADgBQAAAAABgBQAAAAAAAAQAAAAABgBQAAAAAAAAIAAg3IgSAAIAABYgAgwAkQAFgDAAgEIAAhOIAtAAIAAA2IgiAAIAAAaIATgGIgGgLIAJgEQAMAVADAIIgJAGIgFgLQggALgDACIgEgLgAgggEIAYAAIAAgNIgYAAgAgggaIAYAAIAAgOIgYAAg");
+	this.shape_2.setTransform(-6.4,0.3,1.037,1.037);
+
+	this.shape_3 = new cjs.Shape();
+	this.shape_3.graphics.f("#FCFFFF").s().p("AgyAzIAAgLIA2AAQAKgWAHgeIALACQgHAbgJAXIAjAAIAAALgAgfgKIALgDQAIAaAEAUIgMADQgCgUgJgagAgugRIAAgLIBdAAIAAALgAgIgwIAKgCIAFASIgKADQgCgIgDgLg");
+	this.shape_3.setTransform(-18.5,-0.3,1.037,1.037);
+
+	this.shape_4 = new cjs.Shape();
+	this.shape_4.graphics.f("#3E3A39").s().p("A3dBsIAAjXMAu7AAAIAADXg");
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_4},{t:this.shape_3},{t:this.shape_2},{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.立即了解, new cjs.Rectangle(-150.1,-10.7,300.3,21.6), null);
+
+
+(lib.枕頭 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.instance = new lib.pillow();
+	this.instance.parent = this;
+	this.instance.setTransform(-56,-49);
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.枕頭, new cjs.Rectangle(-56,-49,112,98), null);
+
+
+(lib.咖啡組 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.instance = new lib.coffee();
+	this.instance.parent = this;
+	this.instance.setTransform(-101,-66);
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.咖啡組, new cjs.Rectangle(-101,-66,201,131), null);
+
+
+(lib.tv_1 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.instance = new lib.tv();
+	this.instance.parent = this;
+	this.instance.setTransform(-107,-68);
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.tv_1, new cjs.Rectangle(-107,-68,214,136), null);
+
+
+(lib.title_1 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.instance = new lib.title();
+	this.instance.parent = this;
+	this.instance.setTransform(-119,-31);
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.title_1, new cjs.Rectangle(-119,-31,238,62), null);
+
+
+(lib.sony = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AkEA/QgbgZgBgmQABgkAbgaQARgQAcgJQAcgJAdAAQBAAAAnAiQAbAZAAAlQAAAmgbAZQglAihCAAQhAAAgmgigAjVgyQgUAUAAAeQAAAfAUAUQAWAVAhAAQAhAAAWgVQAUgUAAgfQAAgegUgUQgVgVgiAAQghAAgWAVgAnaBbQgTgFgVgIQAAgBgBAAQAAAAgBAAQAAAAgBAAQAAABAAAAIgCADIAAAJIgbAAIAAhEIAYAAQAAAMAHAHQALAOATAHQAZAJAbAAQAcAAAQgIQAOgEAAgOQAAgJgGgEIgMgFQgNgDgogDQgkgEgTgFQgXgFgPgMIgGgJQgHgLABgNQgBgdAkgQQAegNAjAAQAaAAAYAHQASAFAMAGQADACACgCQAAAAABAAQAAgBAAAAQABAAAAgBQAAAAAAgBIAAgGIAYAAIAAA7IgWAAQgCgPgLgIIgOgIQgagLggAAQghAAgQAKQgJAFAAAJQgBAIAKAEQAHACATACIAdADQAoAEAUAFQAMADAJAFQALAEAHAHQAOAMAAAXQAAAWgRAOQgNAKgUAGQgcAIgaAAQgSAAgYgFgAFqBXIAAgWIAVAAIAGAAIAFgEIAAgFIAAgiIgBgDIhBhJQgIgKgLAAIgVAAIAAgVIB3AAIAAAVIgOAAQgBAAgBAAQAAABgBAAQAAAAAAAAQgBABAAAAQgBADACACIAoAwIABABIAqgxQAAAAABgBQAAAAAAgBQAAAAAAgBQAAgBAAAAQgBgBAAAAQAAgBgBAAQAAAAgBgBQgBAAgBAAIgOAAIAAgVIBiAAIAAAVIgXAAQgJAAgIAJIhBBKIgBADIAAAiIABAFQAAACAEACIAGAAIAXAAIAAAWgADJBXIiJh5IAABVQABAIABADQACADAGAAIAZAAIAAAWIhjAAIAAgWIAXAAQAIAAAAgOIAAhkQAAgPgOAAIgSAAIAAgVIBTAAIB3BqIgBhHQAAgIgCgDQgDgDgHAAIgWAAIAAgVIBlAAIAAAVIgWAAQgHAAgCADQgBADgBAIIACCJg");
+	this.shape.setTransform(0,0,0.566,0.566);
+
+	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.sony, new cjs.Rectangle(-31.2,-5.5,62.5,11), null);
+
+
+(lib.master = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// 視覺
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AgeAqQgPgQAAgZQAAgaAPgQQAQgQAbAAQAPAAAPAHIgGASQgLgGgNgBQgQAAgKALQgKALAAASQAAAQAJALQAKALAPAAQAIAAAFgBIAAgcIgSAAIAAgSIAoAAIAAA6QgQAIgUAAQgYAAgQgQg");
+	this.shape.setTransform(34.1,45.5);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AgeA3IADgSQAJADAKAAQAXAAADgeQgIAJgOAAQgQAAgKgKQgJgKAAgQQAAgSALgLQALgLARAAQAWAAAKARQAIAOAAAWQAAAbgMARQgNASgWAAQgOAAgJgDgAgMggQgFAFAAAKQAAAIAEAFQAFAGAIAAQAHgBAGgEQAFgFAAgHQAAgJgFgHQgFgIgIAAQgIAAgEAHg");
+	this.shape_1.setTransform(23.2,45.5);
+
+	this.shape_2 = new cjs.Shape();
+	this.shape_2.graphics.f("#FFFFFF").s().p("AAeA4IgJgbIgpAAIgJAbIgXAAIAnhvIAcAAIAnBvgAgOALIAdAAIgPgwg");
+	this.shape_2.setTransform(12.5,45.5);
+
+	this.shape_3 = new cjs.Shape();
+	this.shape_3.graphics.f("#FFFFFF").s().p("AgkAyIAFgSQANAHANgBQAUAAAAgSQAAgRgZgBIgUACIADg8IA7AAIAAASIgoAAIgBAYIAJAAQAPgBAKAJQAMAKAAAQQAAARgMAKQgLAKgRAAQgTAAgOgHg");
+	this.shape_3.setTransform(1.9,45.6);
+
+	this.shape_4 = new cjs.Shape();
+	this.shape_4.graphics.f("#FFFFFF").s().p("AgkAyIAFgSQANAHANgBQAUAAAAgSQAAgRgZgBIgUACIADg8IA7AAIAAASIgoAAIgCAYIAKAAQAPgBAKAJQAMAKAAAQQAAARgMAKQgLAKgRAAQgTAAgOgHg");
+	this.shape_4.setTransform(-7.4,45.6);
+
+	this.shape_5 = new cjs.Shape();
+	this.shape_5.graphics.f("#FFFFFF").s().p("AgSAJIAAgRIAlAAIAAARg");
+	this.shape_5.setTransform(-15.2,46.4);
+
+	this.shape_6 = new cjs.Shape();
+	this.shape_6.graphics.f("#FFFFFF").s().p("AgsA4IAAhvIAkAAQAaAAAOAPQANAPAAAZQAAAagOAPQgOAPgZAAgAgWAmIALAAQAiAAAAgmQAAglgiAAIgLAAg");
+	this.shape_6.setTransform(-24.4,45.5);
+
+	this.shape_7 = new cjs.Shape();
+	this.shape_7.graphics.f("#FFFFFF").s().p("AAQA4Igjg3IgBAAIAAA3IgWAAIAAhvIAWAAIAAA0IABAAIAig0IAaAAIgmA2IAoA5g");
+	this.shape_7.setTransform(-35.3,45.5);
+
+	this.shape_8 = new cjs.Shape();
+	this.shape_8.graphics.f("#FFFFFF").s().p("AgeAqQgPgQAAgaQAAgZAPgPQAPgRAbAAQAQAAAPAGIgGATQgLgGgOAAQgPAAgKAKQgKALAAASQAAAQAJALQAJAMAQAAQAJgBAEgCIAAgcIgSAAIAAgRIAoAAIAAA6QgQAIgUAAQgZAAgPgQg");
+	this.shape_8.setTransform(34.6,11.8);
+
+	this.shape_9 = new cjs.Shape();
+	this.shape_9.graphics.f("#FFFFFF").s().p("AgeA3IADgTQAJAEAKAAQAXAAADgfQgIAKgOAAQgQAAgKgLQgJgJAAgRQAAgQALgMQALgLARAAQAWAAAKASQAIANAAAWQAAAbgMARQgNASgWAAQgOAAgJgDgAgMghQgFAGAAAJQAAAJAEAGQAFAEAIAAQAHABAGgFQAFgFAAgHQAAgJgFgHQgFgHgIAAQgIAAgEAFg");
+	this.shape_9.setTransform(23.7,11.8);
+
+	this.shape_10 = new cjs.Shape();
+	this.shape_10.graphics.f("#FFFFFF").s().p("AAeA4IgKgbIgoAAIgJAbIgXAAIAmhvIAdAAIAnBvgAgOAKIAdAAIgPgvg");
+	this.shape_10.setTransform(13,11.8);
+
+	this.shape_11 = new cjs.Shape();
+	this.shape_11.graphics.f("#FFFFFF").s().p("AgkAyIAFgRQANAFANABQAUAAAAgSQAAgTgZABIgUABIADg8IA7AAIAAATIgoAAIgBAXIAJAAQAPAAAKAJQAMAIAAAQQAAATgMAKQgLAJgRAAQgTAAgOgHg");
+	this.shape_11.setTransform(2.5,11.9);
+
+	this.shape_12 = new cjs.Shape();
+	this.shape_12.graphics.f("#FFFFFF").s().p("AgfApQgIgOAAgWQAAgbAMgRQANgSAWAAQALAAAKADIgDASQgJgCgHAAQgXgBgEAfIABAAQAIgKANAAQAQAAAKALQAJAJAAARQAAARgLALQgLALgSAAQgVAAgKgRgAgMAFQgFAEAAAHQAAAKAFAHQAFAHAIAAQAIAAAEgGQAFgGAAgJQAAgTgRAAQgHAAgGAFg");
+	this.shape_12.setTransform(-7,11.8);
+
+	this.shape_13 = new cjs.Shape();
+	this.shape_13.graphics.f("#FFFFFF").s().p("AgSAJIAAgRIAlAAIAAARg");
+	this.shape_13.setTransform(-15.8,12.7);
+
+	this.shape_14 = new cjs.Shape();
+	this.shape_14.graphics.f("#FFFFFF").s().p("AgsA4IAAhvIAkAAQAaAAAOAPQANAOAAAaQAAAagOAPQgOAPgZAAgAgWAmIALAAQAiAAAAgmQAAgkgiAAIgLAAg");
+	this.shape_14.setTransform(-25,11.8);
+
+	this.shape_15 = new cjs.Shape();
+	this.shape_15.graphics.f("#FFFFFF").s().p("AAQA4Igjg4IgBAAIAAA4IgWAAIAAhvIAWAAIAAA1IABAAIAig1IAaAAIgmA2IAoA5g");
+	this.shape_15.setTransform(-35.9,11.8);
+
+	this.shape_16 = new cjs.Shape();
+	this.shape_16.graphics.f("#3F3B3A").s().p("AgeBZQAYgIAKgQQAIgNADgZIgUAAIAAh0IBdAAIAAB0IgaAAIAAA0QAAABAAABQAAABAAAAQAAABAAAAQAAABABAAQAAAAAAAAQABAAAAAAQABABABAAQAAAAABAAIAQAAQADAAACgFIABgXQAEAEAIACQAAAVgEAHQgEAHgJAAIgSAAQgLAAgDgEQgEgEAAgLIAAg0IgUAAQgDAdgJAQQgMASgaAJQgDgGgFgEgAAIAPIBCAAIAAgXIhCAAgAAIgUIBCAAIAAgXIhCAAgAAIg2IBCAAIAAgXIhCAAgAg/BiIAAhaQgQAQgPAKIgGgNQASgMARgRQASgUALgUIg7AAIAAgNIBCAAIADgBIAIAGQgLAYgRAWQARAPANAPIgJAMIgYgcIAABegAhHhbIAKgHQAPAPAGAMIgLAIQgHgPgNgNg");
+	this.shape_16.setTransform(32.6,-25.6);
+
+	this.shape_17 = new cjs.Shape();
+	this.shape_17.graphics.f("#3F3B3A").s().p("AARBdQgRAAgFgDQgGgFAAgNIAAgHIgzAAIAAALIgOAAIAAhLICSAAIAABAIhFAAIAAAIQABAFADACQADABAKABIAyAAQAIgBADgEQADgFAAgRQAHAEAHABQgDAUgFAHQgEAGgPAAgAABA2IA2AAIAAgQIg2AAgAg+A2IAzAAIAAgQIgzAAgAABAcIA2AAIAAgQIg2AAgAg+AcIAzAAIAAgQIgzAAgAANgRIADgJQAfAEAUAHIgEAKQgXgIgbgEgAgLgGIAAgyIhGAAIAAAkIgNAAIAAgvIBTAAIAAgOIhKAAIAAgLICjAAIAAALIhMAAIAAAOIBVAAIAAAvIgOAAIAAgkIhHAAIAAAygAhLgRIAzgIIABAJIgwAKgAhHgrIAFgIQAaAEARAHIgFAJQgSgIgZgEgAAPgnQARgEAZgJIAGAIQgOAGgdAHg");
+	this.shape_17.setTransform(11.3,-25.3);
+
+	this.shape_18 = new cjs.Shape();
+	this.shape_18.graphics.f("#3F3B3A").s().p("AhXBXQAjgOAVggQgUgTgVgOQgGAJgFAGQgCgEgIgHQAZgdANg4IgkAAIAAgOIBtAAIAAAOIg7AAIgJAiIAyAAIACgBIAIAEQgNBlhLAjQgEgIgFgFgAhCgDQAbARAQAPQAMgXAHgfIgzAAIgLAWgAAvBUQAWAAAFAAQAFgBAAgEIAAixIAOAAIAACxQAAAMgIAEQgHADgZAAQgCgJgEgFgAAiAuIAAh4IAOAAIAAB4g");
+	this.shape_18.setTransform(-11.2,-25.5);
+
+	this.shape_19 = new cjs.Shape();
+	this.shape_19.graphics.f("#3F3B3A").s().p("AgmBVQAXAAAGAAQAEgBAAgDIAAg1QhEAEgIAEQAAgFgEgKQAKgBAUgJQAbgMAYgNQg6ADgGACIgEgOQAGAAALgHQAWgKAdgYIAMAIQgYATgXAMIA4gDIAZgQIALAJQgrAdgzAXIBjgHQgJgKgOgLIAMgGQAcAXARAYIgMAHIgMgPIg7AEIAAA3QAAAMgJADQgFADgbAAQgBgHgFgHgAhbBRQAcgRATgZIAOAFQgTAZgeAWgAAeAtIALgIQAhAaARARIgMAJQgRgUgggYgAhZg7QBegTApgTIAKALQgvAWhdAQQgBgEgEgHg");
+	this.shape_19.setTransform(-32.7,-25.6);
+
+	this.shape_20 = new cjs.Shape();
+	this.shape_20.graphics.f("#3F3B3A").s().p("AAgBQIgMgsQgEgPgGgEQgGgFgQAAIgVAAIAABEIgaAAIAAifIA7AAQAWAAAOAKQAQALAAAWQAAAdgdAHIAAABQAIACAFAGQAFAHAEAOIAPAygAghgJIAbAAQAfAAAAgYQAAgZgeAAIgcAAg");
+	this.shape_20.setTransform(35.6,-51.5);
+
+	this.shape_21 = new cjs.Shape();
+	this.shape_21.graphics.f("#3F3B3A").s().p("AguBQIAAifIBbAAIAAAVIhBAAIAAAuIA8AAIAAAVIg8AAIAAAyIBDAAIAAAVg");
+	this.shape_21.setTransform(22,-51.5);
+
+	this.shape_22 = new cjs.Shape();
+	this.shape_22.graphics.f("#3F3B3A").s().p("AgLBQIAAiKIguAAIAAgVIBzAAIAAAVIgsAAIAACKg");
+	this.shape_22.setTransform(9.3,-51.5);
+
+	this.shape_23 = new cjs.Shape();
+	this.shape_23.graphics.f("#3F3B3A").s().p("AgzBKIAFgWQAVAKAVAAQAeAAAAgXQAAgKgJgHQgHgGgSgHQgVgJgKgJQgLgMAAgQQAAgWASgMQAPgLAUAAQAZAAAQAHIgFAVQgRgGgSAAQgcAAAAAUQAAAJAIAHQAGAFARAIQAYAJAJAJQAMAMAAASQAAAXgRAMQgQALgWAAQgbAAgVgJg");
+	this.shape_23.setTransform(-3,-51.5);
+
+	this.shape_24 = new cjs.Shape();
+	this.shape_24.graphics.f("#3F3B3A").s().p("AAxBQIgQgrIhBAAIgQArIgcAAIA7ifIAjAAIA7CfgAgaAPIA0AAIgahKg");
+	this.shape_24.setTransform(-17,-51.5);
+
+	this.shape_25 = new cjs.Shape();
+	this.shape_25.graphics.f("#3F3B3A").s().p("AA5BQIAAiKIAAAAIgqCKIgfAAIgpiKIAACKIgYAAIAAifIAsAAIAlCHIAAAAIAmiHIAsAAIAACfg");
+	this.shape_25.setTransform(-34.8,-51.5);
+
+	this.shape_26 = new cjs.Shape();
+	this.shape_26.graphics.f("#3F3B3A").s().p("AmACLQg5AAgpgpQgpgpAAg5QAAg5ApgoQApgpA5AAIMAAAQA6AAApApQApAoAAA5QAAA5gpApQgpApg6AAg");
+	this.shape_26.setTransform(0,11.5);
+
+	this.shape_27 = new cjs.Shape();
+	this.shape_27.graphics.f("#3F3B3A").s().p("AmACMQg5gBgpgpQgpgpAAg5QAAg4ApgpQApgpA5gBIMAAAQA6ABApApQApApAAA4QAAA5gpApQgpApg6ABg");
+	this.shape_27.setTransform(0,45.8);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_27},{t:this.shape_26},{t:this.shape_25},{t:this.shape_24},{t:this.shape_23},{t:this.shape_22},{t:this.shape_21},{t:this.shape_20},{t:this.shape_19},{t:this.shape_18},{t:this.shape_17},{t:this.shape_16},{t:this.shape_15},{t:this.shape_14},{t:this.shape_13},{t:this.shape_12},{t:this.shape_11},{t:this.shape_10},{t:this.shape_9},{t:this.shape_8},{t:this.shape_7},{t:this.shape_6},{t:this.shape_5},{t:this.shape_4},{t:this.shape_3},{t:this.shape_2},{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.master, new cjs.Rectangle(-52.4,-59.8,104.8,119.6), null);
+
+
+(lib.glass_1 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.instance = new lib.glass();
+	this.instance.parent = this;
+	this.instance.setTransform(-49,-73.5);
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.glass_1, new cjs.Rectangle(-49,-73.5,98,147), null);
+
+
+(lib.give = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#1E1E1E").s().p("AjkDDQAigxAYgKQAXgrAPg6IhEAAQATgoAYhFIhBAAIAAghIBvAAQgUA4gXA1IAqAAIAGgBIARAHQgVBRgcA0IAjAXQAYAPAjAFQAcAFAwAAQAuAAA4gDQA2gDApgFQgKAZgBAOQhQAFhrAAQgyAAgfgFQgjgGgagQIgcgTQgOgKgHAAQgNAAgeA/gAhUCCQBpgsAShSIh8AAIAAghICAAAIABhIIhzAAIAAgiICmAAQAfgzAQgqIAlAMQgUAkgbAtIBLAAIAAAiIh+AAIgBBIICNAAIAAAhIiRAAIAAABQBfBYAiAmIgZAZQgfgkhThQQgdBKhgArQgLgQgOgLgAi8jTIAggJIAbBOIgjALQgRg2gHgagAgqjWIAegMQAaAoARAjIgfAOQgOgggcgtg");
+	this.shape.setTransform(0,-0.2,0.31,0.31);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f().ls(["#826628","#B08E3D","#E6D274","#F4EA95","#ECCD6D","#BC9B47","#735926","#C5A347","#F7EF91"],[0,0.22,0.322,0.404,0.482,0.592,0.725,0.91,1],0,-49.2,0,49.3).ss(1.5).p("AHeAAQAADGiMCMQiMCMjGAAQjFAAiMiMQiMiMAAjGQAAjFCMiMQCMiMDFAAQDGAACMCMQCMCMAADFg");
+	this.shape_1.setTransform(0,0,0.31,0.31);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.give, new cjs.Rectangle(-15.8,-15.8,31.6,32.1), null);
+
+
+(lib.buy = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#1E1D1D").s().p("AjcC8QBegTA2geIAhAQQg8AkhgAaQgNgSgMgLgAAqCgIAagWQBjAgA2AYIgiAWQgygZhfgfgAidCHIAAjVIFBAAIAADVgAh4BtID2AAIAAgmIj2AAgAh4AuID2AAIAAglIj2AAgAh4gPID2AAIAAglIj2AAgAi5hqIAAhuIF6AAIAABugABJiHIBVAAIAAg0IhVAAgAgoiHIBRAAIAAg0IhRAAgAiYiHIBQAAIAAg0IhQAAg");
+	this.shape.setTransform(0,0.4,0.31,0.31);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f().ls(["#846728","#B5913D","#EED873","#FBF096","#F4D36C","#C19E44","#745920","#CBA746","#FFF58F"],[0,0.22,0.322,0.404,0.482,0.592,0.725,0.91,1],0,-49.2,0,49.3).ss(1.5).p("AHeAAQAADGiMCMQiMCMjGAAQjFAAiMiMQiMiMAAjGQAAjFCMiMQCMiMDFAAQDGAACMCMQCMCMAADFg");
+	this.shape_1.setTransform(0,0,0.31,0.31);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.buy, new cjs.Rectangle(-15.8,-15.8,31.6,32.1), null);
+
+
+(lib.BRAVIA = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AgJBHIhDiOIAZAAIA3B6IA0h6IAVAAIhBCOg");
+	this.shape.setTransform(6.4,0,0.596,0.596);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AA1BHIgSgnIhJAAIgRAnIgVAAIBCiOIAVAAIBCCOgAAdASIgfhEIgeBEIA9AAg");
+	this.shape_1.setTransform(21.4,0,0.596,0.596);
+
+	this.shape_2 = new cjs.Shape();
+	this.shape_2.graphics.f("#FFFFFF").s().p("AgLBHIAAiOIAXAAIAACOg");
+	this.shape_2.setTransform(14,0,0.596,0.596);
+
+	this.shape_3 = new cjs.Shape();
+	this.shape_3.graphics.f("#FFFFFF").s().p("AA1BHIgSgnIhJAAIgQAnIgWAAIBBiOIAWAAIBCCOgAAcASIgfhEIgdBEIA8AAg");
+	this.shape_3.setTransform(-2.9,0,0.596,0.596);
+
+	this.shape_4 = new cjs.Shape();
+	this.shape_4.graphics.f("#FFFFFF").s().p("AAjBHIgzhJIAFAAQATAAAIgDQAPgFgBgUQAAgRgLgGQgHgEgPAAIgiAAIAACAIgWAAIAAiOIA2AAQAXAAALAFQAYAKAAAZQAAAQgJAMQgLAKgSACIAtA+g");
+	this.shape_4.setTransform(-12.6,0,0.596,0.596);
+
+	this.shape_5 = new cjs.Shape();
+	this.shape_5.graphics.f("#FFFFFF").s().p("Ag7BHIAAiOIA5AAQAUABAJAEQAYAKAAAWQAAAJgFAIQgGAIgJAGQAOADAIAJQAGAKAAANQAAALgEAJQgGAJgHAEQgOAGgZAAgAgkA6IAjAAQAPAAAJgDQAOgFABgVQgBgRgPgFQgJgDgRAAIggAAgAgkgJQArAAAHgCQAIgCAFgHQADgGAAgGQAAgQgKgFQgHgEgNAAIgkAAg");
+	this.shape_5.setTransform(-22.5,0,0.596,0.596);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_5},{t:this.shape_4},{t:this.shape_3},{t:this.shape_2},{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.BRAVIA, new cjs.Rectangle(-26,-4.2,52,8.6), null);
+
+
+(lib.註冊送 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f().ls(["#826628","#B08E3D","#E6D274","#F4EA95","#ECCD6D","#BC9B47","#735926","#C5A347","#F7EF91"],[0,0.22,0.322,0.404,0.482,0.592,0.725,0.91,1],0,-101.5,0,101.5).ss(1.5).p("AAAPoQjEAAiNiMQiMiNAAjFIAAwTQAAjFCMiNQCNiMDEAAQDGAACMCMQCMCNAADFIAAQTQAADFiMCNQiNCMjFAAg");
+	this.shape.setTransform(0,0,0.298,0.298);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#1E1E1E").s().p("AjkDDQAigxAYgLQAXgqAPg6IhEAAQASgmAZhHIhBAAIAAghIBvAAQgSAygZA7IAqAAIAGgBIARAHQgVBSgcAyIAjAYQAYAPAjAFQAcAFAwAAQAuAAA4gDQA2gDApgFQgKAZgBAOQhQAFhrAAQgyAAgfgFQgjgGgagQIgcgTQgOgKgHAAQgNAAgeA/gAhUCBQBpgrAShSIh8AAIAAghICAAAIABhIIhzAAIAAgiICmAAQAfgyAQgrIAlAMQgWAogZApIBLAAIAAAiIh+AAIgBBIICNAAIAAAhIiRAAIAAABQBfBXAiAmIgZAaQgdgihVhSQgdBJhgAsQgKgQgPgMgAi8jTIAggKQAOAmANApIgjALIgYhQgAgqjWIAegMQAZAlASAmIgfAOQgPghgbgsg");
+	this.shape_1.setTransform(0,15.3,0.298,0.298);
+
+	this.shape_2 = new cjs.Shape();
+	this.shape_2.graphics.f("#1E1E1E").s().p("AiwDVIAAjTIgxAAIAAgjIAxAAIAAizIFmAAIAACzIArAAIAAAjIgrAAIAAClQAAAQgDAIQgEAJgJAFQgPAHgugBQgDgVgIgPIAsABQAIgBAAgJIAAikIhLAAIAADMIgjAAIAAjMIhIAAIAADMIgiAAIAAjMIhGAAIAADTgABHghIBLAAIAAiPIhLAAgAgkghIBIAAIAAiPIhIAAgAiMghIBGAAIAAiPIhGAAg");
+	this.shape_2.setTransform(0,0.3,0.298,0.298);
+
+	this.shape_3 = new cjs.Shape();
+	this.shape_3.graphics.f("#1E1E1E").s().p("AjDDgIAAiiICOAAIAACJIhtAAIAAAZgAiiCrIBLAAIAAhQIhLAAgAglDSIAAgjIBsAAIAAiBIhbAAIAAgiIBbAAIAAhoIhjAAIAAgjIDzAAIAAAjIhsAAIAABoIBgAAIAAAiIhgAAIAACBIB1AAIAAAjgAjNAZIAAgdICZAAIAAAdgAjFgrIAAgeICRAAIAAAegAjfhxIAAgeIC2AAIAAAegABBimQgOgXgPgSIAcgQQAjApARAkIgeASQgHgQgOgWgAiijQIAbgNQAaAiAIAaIgdAQQgHgagZglg");
+	this.shape_3.setTransform(0,-15.7,0.298,0.298);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_3},{t:this.shape_2},{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.註冊送, new cjs.Rectangle(-15.2,-30.8,30.5,62.3), null);
+
+
+(lib.預購優惠禮 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#3F3B3A").s().p("AhfCHIAAhwQgNAPgQANQgEgRgIgLQAVgNASgWQATgXALgZIg/AAIAAgZIAsAAQgHgPgPgVIAUgNQARAUAIARIgSAMIAbAAIAFgBIAOAKQgKAfgVAgQAMALAYAcIgRAXIgXghIAAB3gAgnCCIAAgVIAyAAIgKgZIAVgHQAIARAEAPIAfAAQALgYABgIIAZAHIgPAZIAyAAIAAAVgAgPBNIAAg5ICDAAIAAA5gAAHA7IBVAAIAAgWIhVAAgAghAHIAAgTICmAAIAAATgAgYgZIAAhWIApAAIAAgYIAVAAIAAAYIAWAAIAAgYIAWAAIAAAYIAqAAIAABWgABOgrIAYAAIAAgRIgYAAgAAmgrIAWAAIAAgRIgWAAgAgCgrIAWAAIAAgRIgWAAgABOhMIAYAAIAAgSIgYAAgAAmhMIAWAAIAAgSIgWAAgAgChMIAWAAIAAgSIgWAAg");
+	this.shape.setTransform(15.5,7.2,0.504,0.504);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#3F3B3A").s().p("AgVCFQgcAAgJgGQgJgGAAgTIAAgmIAbAAIAAAmQAAAGAEABQADACAOAAIA5AAQAKAAAEgFQADgFABgSQAIAGAQADQgDAZgIAIQgIAIgVAAgAiCB0QARgWAKggIAYAKQgNAmgPATgABLBHIAXgIQAZAeAIAaIgZAJQgGgXgZgigAgZA9IARgNIhxABIgBgXIBtAAIAAgVIhbAAIAAhTIBbAAIAAgRIhtAAIAAgVIBtAAIAAgQIAbAAIAAAQIBxAAIAAAVIhxAAIAAARIBcAAIAABTIgmAAQAnATAWAVIgTAPIgRgOIhiACQAeAQAPAQIgTAQQgRgSgdgRgAAOAaIAwgBIgUgKIANgKIgpAAgAAOgLIBBAAIAAgRIhBAAgAhOgLIBBAAIAAgRIhBAAgAAOgsIBBAAIAAgRIhBAAgAhOgsIBBAAIAAgRIhBAAg");
+	this.shape_1.setTransform(0.2,7.1,0.504,0.504);
+
+	this.shape_2 = new cjs.Shape();
+	this.shape_2.graphics.f("#3F3B3A").s().p("Ag/BzQArgFAbgHIgXgQIgcAPQgGgJgJgHIAbgNIgLgNIAVgHIAIAJQAOgLAHgJQgJgEAAgPIAAgFQgOAVgOAJIgPgMQARgLAMgTIAOAIIAAgHIAVAAIAAAQQAAAEACABQACABAHAAIAgAAQAFAAABgCQACgCABgHQAGADALACIgJgJIAOgJQAYAVAJANIgPAKQgHgJgPgQQgCAMgFAEQgFAFgMAAIggAAIgKALIBEAAIAFgBIARAJQgPAXgfAQQAfAIAnADQgIAIgGANQgygGgkgNQglANgyAHQgEgJgJgMgAABBLQAOAKAWAJQAXgKAOgLIhGAAgAhkCHIAAicQgMATgKAMQgGgMgIgQQAkgsAVhJIAaAIQgKAdgLAaIAADPgAAXAFIAJgFIhCAAIAAAXIgXAAIAAgnIAcAAIAAhKIAxAAIADgNIhIAAIAAgUIC1AAIAAAUIhQAAIgGANIBBAAIAABKIAaAAIAAAnIgYAAIAAgXIhGAAQAQALAFAFIgQAKQgHgJgSgMgAgFgQIBaAAIAAgMIhaAAgAgFgoIBaAAIAAgMIhaAAgAgFhAIBaAAIAAgLIhaAAg");
+	this.shape_2.setTransform(-15,7.3,0.504,0.504);
+
+	this.shape_3 = new cjs.Shape();
+	this.shape_3.graphics.f("#3F3B3A").s().p("AiIB5QAUgWAKgiIAYAFQgMAqgWAYQgMgLgIgEgAA7BxQAWABAJgBQAFAAAAgEIAAgWIhVAAIAAAwIgYAAIAAgwIgRAAIAAgUIARAAIAAhKIA2AAIAAgOIhGAAIAAgVIAnAAIAAgPIgZAAIAAgUIAZAAIAAgOIghAAIAAgVIAhAAIAAgXIAZAAIAAAXIAlAAIAAgXIAYAAIAAAXIAiAAIAAAVIgiAAIAAAOIAfAAIAAAUIgfAAIAAAPIAoAAIAAAVIhHAAIAAAOIA4AAIAABKIARAAIAAAUIgRAAIAAAWQAAASgLAEQgJAEgiAAQAAgJgHgNgABABDIAfAAIAAgTIgfAAgAAKBDIAeAAIAAgTIgeAAgABAAeIAfAAIAAgSIgfAAgAAKAeIAeAAIAAgSIgeAAgAAigqIAlAAIAAgPIglAAgAAihNIAlAAIAAgOIglAAgAhHBJIAVgJQAPAXAKAXIgVALQgHgVgSgbgAh5A8IAAi5IBWAAIAAC5gAhhAmIAmAAIAAgiIgmAAgAhhgQIAmAAIAAghIgmAAgAhhhGIAmAAIAAghIgmAAg");
+	this.shape_3.setTransform(7.9,-10.6,0.504,0.504);
+
+	this.shape_4 = new cjs.Shape();
+	this.shape_4.graphics.f("#3F3B3A").s().p("AgoBwQASgGARgLQARgKAJgKIAZAOQgdAbgnAOQgDgFgPgNgABBBaIAVgOQAfATAVATIgVAQQgRgSgjgWgAiBBnIAgAAQAFAAAAgEIAAhtIguAAIAAgYIBHAAQgcgYgdgOIAPgRIAcAPQAOgPAKgPIhKAAIAAgYIBWAAIAAAAIAFAAIAGgBIARALQgTAfgZAZQAPALAGAIIgHAJIANAAIAAgBIADAAIAFgBIARAFQgQAvgJAUIgUgGIAOgoIgZAAIAABtQAAALgCAFQgDAGgHADQgLAFggAAQgBgMgIgOgAgHBIIAAiZIAsAAIAEgYIg6AAIAAgYICUAAIAAAYIg8AAIgHAYIA5AAIAACZgAATA0IBMAAIAAgaIhMAAgAATAHIBMAAIAAgYIhMAAgAATgkIBMAAIAAgZIhMAAg");
+	this.shape_4.setTransform(-7.2,-10.3,0.504,0.504);
+
+	this.shape_5 = new cjs.Shape();
+	this.shape_5.graphics.lf(["#826628","#B08E3D","#E6D274","#F4EA95","#ECCD6D","#BC9B47","#735926","#C5A347","#F7EF91"],[0,0.22,0.322,0.404,0.482,0.592,0.725,0.91,1],-62.5,0,62.6,0).s().p("Am5G6Qi3i3AAkDQAAkCC3i3QC4i4EBAAQECAAC4C4QC3C3ABECQgBEDi3C3Qi4C4kCAAQkBAAi4i4gAmkmkQivCvAAD1QAAD2CvCvQCuCvD2AAQD2AACvivQCuivAAj2QAAj1iuivQivivj2AAQj2AAiuCvg");
+	this.shape_5.setTransform(0,0,0.504,0.504);
+
+	this.shape_6 = new cjs.Shape();
+	this.shape_6.graphics.lf(["#F4EA95","#ECCD6D","#D8B859"],[0.22,0.69,1],-32.1,-41.7,32.6,42.3).s().p("AmCGCQigigAAjiQAAjhCgigQChihDhAAQDiAACgChQChCgAADhQAADiihCgQigChjiAAQjhAAihihg");
+	this.shape_6.setTransform(0,0,0.504,0.504);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_6},{t:this.shape_5},{t:this.shape_4},{t:this.shape_3},{t:this.shape_2},{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.預購優惠禮, new cjs.Rectangle(-31.5,-31.5,63.1,63.1), null);
+
+
+(lib.光線 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.lf(["rgba(255,255,255,0)","rgba(255,255,255,0.698)","rgba(255,255,255,0)"],[0,0.494,1],-53.9,0,54,0).s().p("AobY7MAAAgx1IQ3AAMAAAAx1g");
+
+	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.光線, new cjs.Rectangle(-54,-159.5,108,319), null);
+
+
+(lib.預購優惠禮掃光 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// 遮罩 (mask)
+	var mask = new cjs.Shape();
+	mask._off = true;
+	mask.graphics.p("AjeDfQhchcAAiDQAAiCBchcQBdhdCBAAQCCAABdBdQBcBcAACCQAACDhcBcQhdBdiCAAQiBAAhdhdgAjTjTQhYBYAAB7QAAB9BYBXQBYBZB7AAQB8AABYhZQBYhXAAh9QAAh7hYhYQhYhYh8gBQh7ABhYBYgAjCDDQhRhRAAhyQAAhxBRhRQBRhRBxABQBygBBRBRQBRBRAABxQAAByhRBRQhRBRhyAAQhxAAhRhRg");
+
+	// 掃光
+	this.instance = new lib.光線();
+	this.instance.parent = this;
+	this.instance.setTransform(-74.6,-53.8,0.961,1,41.5,0,0,-0.3,0.1);
+	this.instance._off = true;
+
+	var maskedShapeInstanceList = [this.instance];
+
+	for(var shapedInstanceItr = 0; shapedInstanceItr < maskedShapeInstanceList.length; shapedInstanceItr++) {
+		maskedShapeInstanceList[shapedInstanceItr].mask = mask;
+	}
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(12).to({_off:false},0).to({x:74.4,y:60.2},19,cjs.Ease.get(1)).wait(28));
+
+	// Layer 1
+	this.instance_1 = new lib.預購優惠禮();
+	this.instance_1.parent = this;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_1).wait(59));
+
+}).prototype = p = new cjs.MovieClip();
+p.nominalBounds = new cjs.Rectangle(-31.5,-31.5,63.1,63.1);
+
+
+// stage content:
+(lib.gdn_300x250_150k = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// timeline functions:
+	this.frame_469 = function() {
+		this.stop()
+	}
+
+	// actions tween:
+	this.timeline.addTween(cjs.Tween.get(this).wait(469).call(this.frame_469).wait(1));
+
+	// logo
+	this.instance = new lib.BRAVIA();
+	this.instance.parent = this;
+	this.instance.setTransform(261.9,16.5);
+
+	this.instance_1 = new lib.sony();
+	this.instance_1.parent = this;
+	this.instance_1.setTransform(42,16.5);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_1},{t:this.instance}]}).wait(470));
+
+	// 仲夏樂活
+	this.instance_2 = new lib.title_1();
+	this.instance_2.parent = this;
+	this.instance_2.setTransform(150,44.3);
+	this.instance_2.alpha = 0;
+	this.instance_2._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_2).wait(235).to({_off:false},0).to({y:61.1,alpha:1},6,cjs.Ease.get(1)).to({y:57.1},8,cjs.Ease.get(1)).wait(221));
+
+	// 立即了解
+	this.instance_3 = new lib.立即了解();
+	this.instance_3.parent = this;
+	this.instance_3.setTransform(150.2,260.8);
+	this.instance_3.alpha = 0;
+	this.instance_3._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_3).wait(407).to({_off:false},0).to({x:150,y:237.2,alpha:1},5,cjs.Ease.get(1)).to({y:239.2},8,cjs.Ease.get(1)).wait(50));
+
+	// 枕頭
+	this.instance_4 = new lib.枕頭();
+	this.instance_4.parent = this;
+	this.instance_4.setTransform(136.4,162.3);
+	this.instance_4.alpha = 0;
+	this.instance_4._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_4).wait(422).to({_off:false},0).to({x:168,y:163,alpha:1},5,cjs.Ease.get(1)).to({x:164},8,cjs.Ease.get(1)).to({regX:0.1,regY:0.1,rotation:-5.2,x:164.2,y:163.2},3,cjs.Ease.get(1)).to({regX:0,regY:0,rotation:7.2,x:164,y:163},3,cjs.Ease.get(1)).to({rotation:-6.7},3,cjs.Ease.get(1)).to({rotation:0},3,cjs.Ease.get(1)).wait(23));
+
+	// 送
+	this.instance_5 = new lib.give();
+	this.instance_5.parent = this;
+	this.instance_5.setTransform(95.3,137.1,0.627,0.627,0,0,0,0.1,0.3);
+	this.instance_5.alpha = 0;
+	this.instance_5._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_5).wait(417).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:95.2,y:137.2,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:137.1},8,cjs.Ease.get(1)).wait(40));
+
+	// 電視指定機種
+	this.instance_6 = new lib.電視指定機種();
+	this.instance_6.parent = this;
+	this.instance_6.setTransform(134.7,100.6);
+	this.instance_6.alpha = 0;
+	this.instance_6._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_6).wait(413).to({_off:false},0).to({x:166.3,y:100.7,alpha:1},5,cjs.Ease.get(1)).to({x:163.3},8,cjs.Ease.get(1)).wait(44));
+
+	// 買
+	this.instance_7 = new lib.buy();
+	this.instance_7.parent = this;
+	this.instance_7.setTransform(95.3,102.6,0.628,0.628,0,0,0,0.1,0.3);
+	this.instance_7.alpha = 0;
+	this.instance_7._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_7).wait(407).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:95.2,y:102.7,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:102.6},8,cjs.Ease.get(1)).wait(50));
+
+	// 咖啡組
+	this.instance_8 = new lib.咖啡組();
+	this.instance_8.parent = this;
+	this.instance_8.setTransform(143.6,179.5,0.673,0.673,0,0,0,0.1,0.1);
+	this.instance_8.alpha = 0;
+	this.instance_8._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_8).wait(360).to({_off:false},0).to({regX:0.2,x:156.5,alpha:1},5,cjs.Ease.get(1)).to({regX:0.1,x:154.4},8,cjs.Ease.get(1)).wait(1).to({regX:0.2,regY:0.2,scaleX:0.78,scaleY:0.78,x:154.5,y:179.6},4,cjs.Ease.get(1)).to({regX:0.1,regY:0.1,scaleX:0.67,scaleY:0.67,x:154.4,y:179.5},5,cjs.Ease.get(1)).wait(15).to({x:173.2,y:179.4,alpha:0},9,cjs.Ease.get(-1)).wait(63));
+
+	// 送
+	this.instance_9 = new lib.give();
+	this.instance_9.parent = this;
+	this.instance_9.setTransform(96.3,141.1,0.627,0.627,0,0,0,0.1,0.3);
+	this.instance_9.alpha = 0;
+	this.instance_9._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_9).wait(355).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:96.2,y:141.2,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:141.1},8,cjs.Ease.get(1)).wait(30).to({y:142.1},0).to({x:133.2,alpha:0},9,cjs.Ease.get(-1)).wait(63));
+
+	// 電視指定機種
+	this.instance_10 = new lib.電視指定機種();
+	this.instance_10.parent = this;
+	this.instance_10.setTransform(135.7,104.6);
+	this.instance_10.alpha = 0;
+	this.instance_10._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_10).wait(350).to({_off:false},0).to({x:167.3,y:104.7,alpha:1},5,cjs.Ease.get(1)).to({x:164.3},8,cjs.Ease.get(1)).wait(35).to({x:192.3,y:104.6,alpha:0},9,cjs.Ease.get(-1)).wait(63));
+
+	// 買
+	this.instance_11 = new lib.buy();
+	this.instance_11.parent = this;
+	this.instance_11.setTransform(96.3,106.6,0.628,0.628,0,0,0,0.1,0.3);
+	this.instance_11.alpha = 0;
+	this.instance_11._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_11).wait(345).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:96.2,y:106.7,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:106.6},8,cjs.Ease.get(1)).wait(40).to({y:107.6},0).to({x:133.2,alpha:0},9,cjs.Ease.get(-1)).wait(63));
+
+	// glass
+	this.instance_12 = new lib.glass_1();
+	this.instance_12.parent = this;
+	this.instance_12.setTransform(247.4,159);
+	this.instance_12._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_12).wait(289).to({_off:false},0).to({x:227.2,y:157.6},5,cjs.Ease.get(1)).to({x:228.7},4,cjs.Ease.get(1)).to({x:229.2},4).wait(34).to({x:266.2,alpha:0},9,cjs.Ease.get(-1)).wait(125));
+
+	// 預購優惠禮
+	this.instance_13 = new lib.預購優惠禮掃光();
+	this.instance_13.parent = this;
+	this.instance_13.setTransform(250,159.1,0.239,0.239);
+	this.instance_13.alpha = 0;
+	this.instance_13._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_13).wait(294).to({_off:false},0).to({scaleX:1.37,scaleY:1.37,alpha:1},4,cjs.Ease.get(1)).to({scaleX:1,scaleY:1},6,cjs.Ease.get(1)).wait(32).to({x:297,alpha:0},9,cjs.Ease.get(-1)).wait(125));
+
+	// 註冊送
+	this.instance_14 = new lib.註冊送();
+	this.instance_14.parent = this;
+	this.instance_14.setTransform(175.2,127.7,0.731,0.731,0,0,0,0.1,3);
+	this.instance_14._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_14).wait(284).to({_off:false},0).to({regY:3.1,scaleX:1.21,scaleY:1.21,x:175.3,y:127.8},5,cjs.Ease.get(1)).to({regX:0,regY:3,scaleX:1,scaleY:1,x:175.2,y:127.7},8,cjs.Ease.get(1)).wait(39).to({x:209.2,alpha:0},9,cjs.Ease.get(-1)).wait(125));
+
+	// master系列電視
+	this.instance_15 = new lib.master();
+	this.instance_15.parent = this;
+	this.instance_15.setTransform(111.6,160.7,0.722,0.722);
+	this.instance_15.alpha = 0;
+	this.instance_15._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_15).wait(279).to({_off:false},0).to({x:95.7,alpha:1},5).to({x:97.2},8).wait(44).to({x:123.9,alpha:0},9,cjs.Ease.get(-1)).wait(125));
+
+	// 買
+	this.instance_16 = new lib.buy();
+	this.instance_16.parent = this;
+	this.instance_16.setTransform(38.8,126.1,0.628,0.628,0,0,0,0.1,0.3);
+	this.instance_16.alpha = 0;
+	this.instance_16._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_16).wait(274).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:37.7,y:126.2,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:126.1},8,cjs.Ease.get(1)).wait(49).to({x:74.7,alpha:0},9,cjs.Ease.get(-1)).wait(125));
+
+	// tv
+	this.instance_17 = new lib.tv_1();
+	this.instance_17.parent = this;
+	this.instance_17.setTransform(154,173.1);
+	this.instance_17.alpha = 0;
+	this.instance_17._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_17).wait(235).to({_off:false},0).to({y:164.1,alpha:1},12,cjs.Ease.get(1)).wait(18).to({y:197.2,alpha:0},9,cjs.Ease.get(-1)).wait(196));
+
+	// 仲夏樂活
+	this.instance_18 = new lib.title_1();
+	this.instance_18.parent = this;
+	this.instance_18.setTransform(150,44.3);
+	this.instance_18.alpha = 0;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_18).to({y:61.1,alpha:1},6,cjs.Ease.get(1)).to({y:57.1},8,cjs.Ease.get(1)).to({_off:true},221).wait(235));
+
+	// 立即了解
+	this.instance_19 = new lib.立即了解();
+	this.instance_19.parent = this;
+	this.instance_19.setTransform(150.2,260.8);
+	this.instance_19.alpha = 0;
+	this.instance_19._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_19).wait(172).to({_off:false},0).to({x:150,y:237.2,alpha:1},5,cjs.Ease.get(1)).to({y:239.2},8,cjs.Ease.get(1)).to({_off:true},50).wait(235));
+
+	// 枕頭
+	this.instance_20 = new lib.枕頭();
+	this.instance_20.parent = this;
+	this.instance_20.setTransform(136.4,162.3);
+	this.instance_20.alpha = 0;
+	this.instance_20._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_20).wait(187).to({_off:false},0).to({x:168,y:163,alpha:1},5,cjs.Ease.get(1)).to({x:164},8,cjs.Ease.get(1)).to({regX:0.1,regY:0.1,rotation:-5.2,x:164.2,y:163.2},3,cjs.Ease.get(1)).to({regX:0,regY:0,rotation:7.2,x:164,y:163},3,cjs.Ease.get(1)).to({rotation:-6.7},3,cjs.Ease.get(1)).to({rotation:0},3,cjs.Ease.get(1)).to({_off:true},23).wait(235));
+
+	// 送
+	this.instance_21 = new lib.give();
+	this.instance_21.parent = this;
+	this.instance_21.setTransform(95.3,137.1,0.627,0.627,0,0,0,0.1,0.3);
+	this.instance_21.alpha = 0;
+	this.instance_21._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_21).wait(182).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:95.2,y:137.2,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:137.1},8,cjs.Ease.get(1)).to({_off:true},40).wait(235));
+
+	// 電視指定機種
+	this.instance_22 = new lib.電視指定機種();
+	this.instance_22.parent = this;
+	this.instance_22.setTransform(134.7,100.6);
+	this.instance_22.alpha = 0;
+	this.instance_22._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_22).wait(178).to({_off:false},0).to({x:166.3,y:100.7,alpha:1},5,cjs.Ease.get(1)).to({x:163.3},8,cjs.Ease.get(1)).to({_off:true},44).wait(235));
+
+	// 買
+	this.instance_23 = new lib.buy();
+	this.instance_23.parent = this;
+	this.instance_23.setTransform(95.3,102.6,0.628,0.628,0,0,0,0.1,0.3);
+	this.instance_23.alpha = 0;
+	this.instance_23._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_23).wait(172).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:95.2,y:102.7,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:102.6},8,cjs.Ease.get(1)).to({_off:true},50).wait(235));
+
+	// 咖啡組
+	this.instance_24 = new lib.咖啡組();
+	this.instance_24.parent = this;
+	this.instance_24.setTransform(143.6,179.5,0.673,0.673,0,0,0,0.1,0.1);
+	this.instance_24.alpha = 0;
+	this.instance_24._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_24).wait(125).to({_off:false},0).to({regX:0.2,x:156.5,alpha:1},5,cjs.Ease.get(1)).to({regX:0.1,x:154.4},8,cjs.Ease.get(1)).wait(1).to({regX:0.2,regY:0.2,scaleX:0.78,scaleY:0.78,x:154.5,y:179.6},4,cjs.Ease.get(1)).to({regX:0.1,regY:0.1,scaleX:0.67,scaleY:0.67,x:154.4,y:179.5},5,cjs.Ease.get(1)).wait(15).to({x:173.2,y:179.4,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(296));
+
+	// 送
+	this.instance_25 = new lib.give();
+	this.instance_25.parent = this;
+	this.instance_25.setTransform(96.3,141.1,0.627,0.627,0,0,0,0.1,0.3);
+	this.instance_25.alpha = 0;
+	this.instance_25._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_25).wait(120).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:96.2,y:141.2,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:141.1},8,cjs.Ease.get(1)).wait(30).to({y:142.1},0).to({x:133.2,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(296));
+
+	// 電視指定機種
+	this.instance_26 = new lib.電視指定機種();
+	this.instance_26.parent = this;
+	this.instance_26.setTransform(135.7,104.6);
+	this.instance_26.alpha = 0;
+	this.instance_26._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_26).wait(115).to({_off:false},0).to({x:167.3,y:104.7,alpha:1},5,cjs.Ease.get(1)).to({x:164.3},8,cjs.Ease.get(1)).wait(35).to({x:192.3,y:104.6,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(296));
+
+	// 買
+	this.instance_27 = new lib.buy();
+	this.instance_27.parent = this;
+	this.instance_27.setTransform(96.3,106.6,0.628,0.628,0,0,0,0.1,0.3);
+	this.instance_27.alpha = 0;
+	this.instance_27._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_27).wait(110).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:96.2,y:106.7,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:106.6},8,cjs.Ease.get(1)).wait(40).to({y:107.6},0).to({x:133.2,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(296));
+
+	// glass
+	this.instance_28 = new lib.glass_1();
+	this.instance_28.parent = this;
+	this.instance_28.setTransform(247.4,159);
+	this.instance_28._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_28).wait(54).to({_off:false},0).to({x:227.2,y:157.6},5,cjs.Ease.get(1)).to({x:228.7},4,cjs.Ease.get(1)).to({x:229.2},4).wait(34).to({x:266.2,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(358));
+
+	// 預購優惠禮
+	this.instance_29 = new lib.預購優惠禮掃光();
+	this.instance_29.parent = this;
+	this.instance_29.setTransform(250,159.1,0.239,0.239);
+	this.instance_29.alpha = 0;
+	this.instance_29._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_29).wait(59).to({_off:false},0).to({scaleX:1.37,scaleY:1.37,alpha:1},4,cjs.Ease.get(1)).to({scaleX:1,scaleY:1},6,cjs.Ease.get(1)).wait(32).to({x:297,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(358));
+
+	// 註冊送
+	this.instance_30 = new lib.註冊送();
+	this.instance_30.parent = this;
+	this.instance_30.setTransform(175.2,127.7,0.731,0.731,0,0,0,0.1,3);
+	this.instance_30._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_30).wait(49).to({_off:false},0).to({regY:3.1,scaleX:1.21,scaleY:1.21,x:175.3,y:127.8},5,cjs.Ease.get(1)).to({regX:0,regY:3,scaleX:1,scaleY:1,x:175.2,y:127.7},8,cjs.Ease.get(1)).wait(39).to({x:209.2,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(358));
+
+	// master系列電視
+	this.instance_31 = new lib.master();
+	this.instance_31.parent = this;
+	this.instance_31.setTransform(111.6,160.7,0.722,0.722);
+	this.instance_31.alpha = 0;
+	this.instance_31._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_31).wait(44).to({_off:false},0).to({x:95.7,alpha:1},5).to({x:97.2},8).wait(44).to({x:123.9,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(358));
+
+	// 買
+	this.instance_32 = new lib.buy();
+	this.instance_32.parent = this;
+	this.instance_32.setTransform(38.8,126.1,0.628,0.628,0,0,0,0.1,0.3);
+	this.instance_32.alpha = 0;
+	this.instance_32._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_32).wait(39).to({_off:false},0).to({regX:0,regY:0.4,scaleX:1.36,scaleY:1.36,x:37.7,y:126.2,alpha:1},5,cjs.Ease.get(1)).to({scaleX:1,scaleY:1,y:126.1},8,cjs.Ease.get(1)).wait(49).to({x:74.7,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},2).wait(358));
+
+	// tv
+	this.instance_33 = new lib.tv_1();
+	this.instance_33.parent = this;
+	this.instance_33.setTransform(154,173.1);
+	this.instance_33.alpha = 0;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_33).to({y:164.1,alpha:1},12,cjs.Ease.get(1)).wait(18).to({y:197.2,alpha:0},9,cjs.Ease.get(-1)).to({_off:true},36).wait(395));
+
+	// 背景
+	this.instance_34 = new lib.BG();
+	this.instance_34.parent = this;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_34).wait(470));
+
+}).prototype = p = new cjs.MovieClip();
+p.nominalBounds = new cjs.Rectangle(150,125,300,250);
+// library properties:
+lib.properties = {
+	width: 300,
+	height: 250,
+	fps: 18,
+	color: "#FFFFFF",
+	opacity: 1.00,
+	manifest: [
+		{src:"images/BG.jpg?1559554560078", id:"BG"},
+		{src:"images/coffee.png?1559554560078", id:"coffee"},
+		{src:"images/glass.png?1559554560078", id:"glass"},
+		{src:"images/pillow.png?1559554560078", id:"pillow"},
+		{src:"images/title.png?1559554560078", id:"title"},
+		{src:"images/tv.png?1559554560078", id:"tv"}
+	],
+	preloads: []
+};
+
+
+
+
+})(lib = lib||{}, images = images||{}, createjs = createjs||{}, ss = ss||{}, AdobeAn = AdobeAn||{});
+var lib, images, createjs, ss, AdobeAn;

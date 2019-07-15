@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- saved from url=(1528)https://vcdn.adnxs.com/p/creative-html/d7/f9/16/d4/d7f916d4-f7de-4cee-b574-9f9e1c710eaf/300x250/index.html?clickTag=https%3A%2F%2Fsin1-ib.adnxs.com%2Fclick%3F2_l-arx0sz_b-X5qvHSzPwAAAIAUrgNASflJtU_Hxz9J-Um1T8fHP9HqRhfGyDVbflSKHuhVL0bC-ytdAAAAAD11eAC1AAAAMQcAAAIAAACR7AoKv1gPAAAAAABVU0QAVVNEACwB-gDcAAAAAAABAgUCAAAAAAAAViby7wAAAAA.%2Fcpcpm%3DAAAAAAAAAAA%3D%2Fbcr%3DAAAAAAAA8D8%3D%2Fcnd%3D%2521kBG1tQi1q4sPEJHZq1AYv7E9IAAoADEfhetRuB7VPzoJU0lOMTozNTgxQPwOSQAAAAAAAPA_UQAAAAAAAAAAWQAAAAAAAAAAYQAAAAAAAAAAaQAAAAAAAAAAcQAAAAAAAAAA%2Fcca%3DMTg0MSNTSU4xOjM1ODE%3D%2Fbn%3D81578%2Fclickenc%3Dhttps%253A%252F%252Fadclick.g.doubleclick.net%252Faclk%253Fsa%253DL%2526ai%253DCGyX2wPsrXcbNCpL3rQTN6IqIBciE_71NyKGP9OYCwI23ARABIABgnwGCARdjYS1wdWItNDIxMDU2OTI0MTUwNDI4OMgBCakC2ktszZlGYT7gAgCoAwGqBOsBT9A3tj1Ofeh0kWojnVoxtvHUsOQGOl_T4lNdpiZ-X8nDVO-Ixe30C1fPPQQSNp-_OgxoQiqYQ2bYz6yMOm1W8Ng33EjBnwKT0xLFsJIWGr4sBSUIpH9mqMSdDRnCoYgM0fLqWhiREMZBRlAC8BjdoRIn9L1ZF4QXBFFXnmVf9mTRnQ4-EpF1zlafpGUwh8zHvO_-b21E-bBLJ3WG1E1qz9EdzaZagzK6Np3dFbny3DfvJOqTbom97yQZu40FcRM7yz2ar-tASI-f2YJrWpYoXzGWM8a2fzlR__0TuiSgjQnpLLPI1Bvo-5sbEOAEAYAGn5ftnbThhNGHAaAGIagHpr4bqAfZyxuoB8_MG9gHANIIBQiAYRAB%2526num%253D1%2526sig%253DAOD64_17t5-S_xxervmVjWoVoaqVtIrHMQ%2526client%253Dca-pub-4210569241504288%2526adurl%253Dhttps%25253A%25252F%25252Fwww.sony.com.tw%25252Fzh%25252Felectronics%25252Ftv%25252Ft%25252Ftelevisions%25253Fcid%25253D1473%252526utm_source%25253DXaxis%252526utm_medium%25253DDisplayNetwork%252526utm_campaign%25253D2019_BRAVIA%252526utm_content%25253DBanner -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="ad.size" content="width=300,height=250">
+<title>300x250</title>
+<!-- write your code here -->
+<script src="./createjs_2015.11.26_54e1c3722102182bb133912ad4442e19_min.js.下載"></script>
+<!-- add AppNexus HTML5 library-->
+<script type="text/javascript" src="./appnexus-html5-lib.min.js.下載"></script>
+<script src="./300x250.js.下載"></script>
+<script>
+var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
+function init() {
+	canvas = document.getElementById("canvas");
+	anim_container = document.getElementById("animation_container");
+	dom_overlay_container = document.getElementById("dom_overlay_container");
+	var comp=AdobeAn.getComposition("D66046FC72EB4A10A50915A8EC0B635D");
+	var lib=comp.getLibrary();
+	var loader = new createjs.LoadQueue(false);
+	loader.addEventListener("fileload", function(evt){handleFileLoad(evt,comp)});
+	loader.addEventListener("complete", function(evt){handleComplete(evt,comp)});
+	var lib=comp.getLibrary();
+	loader.loadManifest(lib.properties.manifest);
+}
+function handleFileLoad(evt, comp) {
+	var images=comp.getImages();	
+	if (evt && (evt.item.type == "image")) { images[evt.item.id] = evt.result; }	
+}
+function handleComplete(evt,comp) {
+	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+	var lib=comp.getLibrary();
+	var ss=comp.getSpriteSheet();
+	var queue = evt.target;
+	var ssMetadata = lib.ssMetadata;
+	for(i=0; i<ssMetadata.length; i++) {
+		ss[ssMetadata[i].name] = new createjs.SpriteSheet( {"images": [queue.getResult(ssMetadata[i].name)], "frames": ssMetadata[i].frames} )
+	}
+	exportRoot = new lib._300x250();
+	stage = new lib.Stage(canvas);	
+	//Registers the "tick" event listener.
+	fnStartAnimation = function() {
+		stage.addChild(exportRoot);
+		createjs.Ticker.setFPS(lib.properties.fps);
+		createjs.Ticker.addEventListener("tick", stage);
+	}	    
+	//Code to support hidpi screens and responsive scaling.
+	function makeResponsive(isResp, respDim, isScale, scaleType) {		
+		var lastW, lastH, lastS=1;		
+		window.addEventListener('resize', resizeCanvas);		
+		resizeCanvas();		
+		function resizeCanvas() {			
+			var w = lib.properties.width, h = lib.properties.height;			
+			var iw = window.innerWidth, ih=window.innerHeight;			
+			var pRatio = window.devicePixelRatio || 1, xRatio=iw/w, yRatio=ih/h, sRatio=1;			
+			if(isResp) {                
+				if((respDim=='width'&&lastW==iw) || (respDim=='height'&&lastH==ih)) {                    
+					sRatio = lastS;                
+				}				
+				else if(!isScale) {					
+					if(iw<w || ih<h)						
+						sRatio = Math.min(xRatio, yRatio);				
+				}				
+				else if(scaleType==1) {					
+					sRatio = Math.min(xRatio, yRatio);				
+				}				
+				else if(scaleType==2) {					
+					sRatio = Math.max(xRatio, yRatio);				
+				}			
+			}			
+			canvas.width = w*pRatio*sRatio;			
+			canvas.height = h*pRatio*sRatio;
+			canvas.style.width = dom_overlay_container.style.width = anim_container.style.width =  w*sRatio+'px';				
+			canvas.style.height = anim_container.style.height = dom_overlay_container.style.height = h*sRatio+'px';
+			stage.scaleX = pRatio*sRatio;			
+			stage.scaleY = pRatio*sRatio;			
+			lastW = iw; lastH = ih; lastS = sRatio;            
+			stage.tickOnUpdate = false;            
+			stage.update();            
+			stage.tickOnUpdate = true;		
+		}
+	}
+	makeResponsive(false,'both',false,1);	
+	AdobeAn.compositionLoaded(lib.properties.id);
+	fnStartAnimation();
+}
+</script>
+
+</head>
+<body onload="init();" style="margin:0px;" marginwidth="0" marginheight="0">
+<!-- call APPNEXUS.getClickTag() -->
+<a href="javascript:window.open(APPNEXUS.getClickTag(), &#39;_blank&#39;)">
+	<div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00); width:300px; height:250px">
+		<canvas id="canvas" width="300" height="250" style="position: absolute; display: block; background-color: rgb(255, 255, 255); width: 300px; height: 250px;"></canvas>
+		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:300px; height:250px; position: absolute; left: 0px; top: 0px; display: block;">
+		</div>
+	</div>
+    </a>
+
+</body></html>
