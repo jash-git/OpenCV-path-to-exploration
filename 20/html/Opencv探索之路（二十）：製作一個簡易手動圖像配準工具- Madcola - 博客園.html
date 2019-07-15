@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)https://www.cnblogs.com/skyfsm/p/7253208.html -->
+<html lang="zh-TW" class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園</title>
+    <meta property="og:description" content="近日在做基于sift特征点的图像配准时遇到匹配失败的情况，失败的原因在于两幅图像分辨率相差有点大，而且这两幅图是不同时间段的同一场景的图片，所以基于sift点的匹配已经找不到匹配点了。然后老师叫我尝试">
+    <link type="text/css" rel="stylesheet" href="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/bundle-SimpleMemory.css">
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/bundle-SimpleMemory-mobile.css">
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/skyfsm/rss">
+    <link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/skyfsm/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/skyfsm/wlwmanifest.xml">
+    <script src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/osd.js.下載"></script><script src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/amp4ads-host-v0.js.下載"></script><script src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/pubads_impl_rendering_2019070801.js.下載"></script><script async="" src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/analytics.js.下載"></script><script src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/jquery-2.2.0.min.js.下載"></script>
+    <script>var currentBlogId=327280;var currentBlogApp='skyfsm',cb_enable_mathjax=true;var isLogined=false;</script>
+    <script type="text/x-mathjax-config;executed=true">
+    MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processClass: 'math', processEscapes: true },
+        TeX: { 
+            equationNumbers: { autoNumber: ['AMS'], useLabelIds: true }, 
+            extensions: ['extpfeil.js'],
+            Macros: {bm: "\\boldsymbol"}
+        },
+        'HTML-CSS': { linebreaks: { automatic: true } },
+        SVG: { linebreaks: { automatic: true } }
+        });
+    </script><script src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/MathJax.js.下載"></script>
+<script src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/blog-common.js.下載" type="text/javascript"></script>
+<link rel="preload" href="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/f(2).txt" as="script"><script type="text/javascript" src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/f(2).txt"></script><link rel="preload" href="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/f(3).txt" as="script"><script type="text/javascript" src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/f(3).txt"></script><script src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/pubads_impl_2019070801.js.下載" async=""></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><link rel="prefetch" href="https://tpc.googlesyndication.com/safeframe/1-0-35/html/container.html"><script src="chrome-extension://jhffgcfmcckgmioipfnmbannkpncfipo/util.js"></script><script src="chrome-extension://jhffgcfmcckgmioipfnmbannkpncfipo/pagejs.js"></script><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><link type="text/css" rel="stylesheet" charset="UTF-8" href="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/translateelement.css"></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<a name="top"></a>
+
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="https://www.cnblogs.com/skyfsm/"><img id="blogLogo" src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/logo.gif" alt="返回主頁"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/skyfsm/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">冠軍的試煉</font></font></a></h1>
+<h2><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">悟已往之不諫，知來者之可追</font></font></h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">博客園</font></font></a></li>
+<li><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/skyfsm/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">首頁</font></font></a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">新隨筆</font></font></a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/Madcola"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">聯繫</font></font></a></li>
+<li><a id="blog_nav_rss" class="menu" href="https://www.cnblogs.com/skyfsm/rss"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">訂閱</font></font></a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="https://www.cnblogs.com/skyfsm/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">管理</font></font></a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">隨筆- 69&nbsp;  </font></font></span>
+<span id="stats_article_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">文章- 0&nbsp;  </font></font></span>
+<span id="stats-comment_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">評論- 793</font></font></span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+        <div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/skyfsm/p/7253208.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Opencv探索之路（二十）：製作一個簡易手動圖像配準工具</font></font></a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">近日在做基於sift特徵點的圖像配準時遇到匹配失敗的情況，失敗的原因在於兩幅圖像分辨率相差有點大，而且這兩幅圖是不同時間段的同一場景的圖片，所以基於sift點的匹配已經找不到匹配點了。</font><font style="vertical-align: inherit;">然後老師叫我嘗試手動選擇控制點來支持仿射變換。</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">很可惜opencv裡沒有這類似的庫，查了下資料，看看有沒有現成的手動配準軟件，找到了arcgis這款軟件可以做手動配準，不過這軟件也都太大了吧我要的只是一個簡單的功能而已！</font><font style="vertical-align: inherit;">然後想了想，還是自己寫個手動配準工具吧。</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">首先簡單通俗說一下什麼是圖像配準。</font><font style="vertical-align: inherit;">先觀察一下下面兩張圖片。</font></font></p>
+<p><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729003524493-1616904370.jpg"></p>
+<p><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729003536680-299766617.jpg"></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">這是兩張從不同角度拍的場景，他們有大部分的重合，如果我們需要把這兩張圖拼接成一幅更大的圖，我們需要做第一件事就是對他們進行配準，即對圖二進行變換，令圖二的物體轉換到圖一的坐標系，使得像素一一對應，這就是圖像配準。</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">現在圖像的配準方法有很多，比如基於特徵點的配準，也有基於互信息的配準，都有廣泛應用。</font><font style="vertical-align: inherit;">現在我們使用特徵點來配準，關鍵就在於找出兩幅圖像盡可能多對應的特徵點，來求出變換矩陣，然後將待配準圖進行變換。</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">現在實現一個簡易的手動選擇控制點的配準工具第一個版本，步驟有：</font></font></p>
+<ol>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">搭建交互界面，可以對兩幅圖自由選點，並把點坐標存儲起來</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">求出變換矩陣</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">利用變換矩陣對待配準圖進行仿射變換</font></font></li>
+</ol>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">根據以上思路，有以下代碼</font></font></p>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"opencv2/highgui/highgui.hpp"</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"opencv2/imgproc/imgproc.hpp"</span></span><font></font>
+<font></font>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cv.h&gt;  </span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cxcore.h&gt;  </span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;highgui.h&gt;  </span></span><font></font>
+<font></font>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span><font></font>
+<font></font>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> cv;<font></font>
+<font></font>
+<span class="hljs-built_in">vector</span>&lt;Point2f&gt; imagePoints1, imagePoints2;<font></font>
+<font></font>
+Mat ref_win, src_win;<font></font>
+<span class="hljs-keyword">int</span> pcount = <span class="hljs-number">0</span>;<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">on_mouse1</span><span class="hljs-params">(<span class="hljs-keyword">int</span> event, <span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">void</span> *ustc)</span> <span class="hljs-comment">//event鼠标事件代号，x,y鼠标坐标，flags拖拽和键盘操作的代号  </span>
+</span>{
+    <span class="hljs-keyword">if</span> (event == CV_EVENT_LBUTTONDOWN)<span class="hljs-comment">//左键按下，读取初始坐标，并在图像上该点处打点</span><font></font>
+    {<font></font>
+        Point  p = Point(x, y);<font></font>
+        circle(ref_win, p, <span class="hljs-number">1</span>, Scalar(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>), <span class="hljs-number">-1</span>);<font></font>
+        imshow(<span class="hljs-string">"基准图"</span>, ref_win);<font></font>
+        imagePoints1.push_back(p);   <span class="hljs-comment">//将选中的点存起来</span>
+        <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"基准图: "</span> &lt;&lt; p &lt;&lt; <span class="hljs-built_in">endl</span>;<font></font>
+        pcount++;<font></font>
+        <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"ponit num:"</span> &lt;&lt; pcount &lt;&lt; <span class="hljs-built_in">endl</span>;<font></font>
+    }<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">on_mouse2</span><span class="hljs-params">(<span class="hljs-keyword">int</span> event, <span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">void</span> *ustc)</span> <span class="hljs-comment">//event鼠标事件代号，x,y鼠标坐标，flags拖拽和键盘操作的代号  </span>
+</span>{
+    <span class="hljs-keyword">if</span> (event == CV_EVENT_LBUTTONDOWN)<span class="hljs-comment">//左键按下，读取初始坐标，并在图像上该点处打点</span><font></font>
+    {<font></font>
+        Point  p = Point(x, y);<font></font>
+        circle(src_win, p, <span class="hljs-number">1</span>, Scalar(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>), <span class="hljs-number">-1</span>);<font></font>
+        imshow(<span class="hljs-string">"待配准图"</span>, src_win);<font></font>
+        imagePoints2.push_back(p);   <span class="hljs-comment">//将选中的点存起来</span>
+        <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"待配准图: "</span> &lt;&lt; p &lt;&lt; <span class="hljs-built_in">endl</span>;<font></font>
+    }<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span>
+</span>{<font></font>
+    Mat ref = imread(<span class="hljs-string">"ref.png"</span>);  <span class="hljs-comment">//基准图</span>
+    Mat src = imread(<span class="hljs-string">"src.png"</span>);  <span class="hljs-comment">//待配准图</span><font></font>
+<font></font>
+    ref_win = ref.clone();<font></font>
+    src_win = src.clone();<font></font>
+<font></font>
+    namedWindow(<span class="hljs-string">"待配准图"</span>);<font></font>
+    namedWindow(<span class="hljs-string">"基准图"</span>);<font></font>
+    imshow(<span class="hljs-string">"待配准图"</span>, src_win);<font></font>
+    imshow(<span class="hljs-string">"基准图"</span>, ref_win);<font></font>
+    setMouseCallback(<span class="hljs-string">"待配准图"</span>, on_mouse2);<font></font>
+    setMouseCallback(<span class="hljs-string">"基准图"</span>, on_mouse1);<font></font>
+<font></font>
+    waitKey();<font></font>
+    <span class="hljs-built_in">string</span> str;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"往下执行？\n"</span>);
+    <span class="hljs-built_in">cin</span> &gt;&gt; str;<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-comment">//求变换矩阵</span><font></font>
+    Mat homo = findHomography(imagePoints2, imagePoints1, CV_RANSAC);<font></font>
+<font></font>
+    Mat imageTransform1;<font></font>
+    warpPerspective(src, imageTransform1, homo, Size(ref.cols, ref.rows));   <span class="hljs-comment">//变换</span>
+    imshow(<span class="hljs-string">"transform"</span>, imageTransform1);<font></font>
+    imshow(<span class="hljs-string">"基准图打点"</span>, ref_win);<font></font>
+    imshow(<span class="hljs-string">"待配准图打点"</span>, src_win);<font></font>
+    imshow(<span class="hljs-string">"变换图"</span>, imageTransform1);<font></font>
+<font></font>
+    imwrite(<span class="hljs-string">"result.jpg"</span>, imageTransform1);<font></font>
+    imwrite(<span class="hljs-string">"src_p.jpg"</span>, src_win);<font></font>
+    imwrite(<span class="hljs-string">"ref_p.jpg"</span>, ref_win);<font></font>
+<font></font>
+    waitKey();<font></font>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<font></font>
+}</code></pre>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">運行一下，彈出兩幅圖，一張是基準圖，一張待配準圖，我們仔細找出兩者的匹配點，然後用鼠標左鍵點擊該點，那麼這個點的坐標信息就被記錄下來了。</font><font style="vertical-align: inherit;">注意匹配點的順序必須一一對應，比如用鼠標在基準圖點擊了一個點，那麼我們也必須在待配準圖也點擊對應的匹配點。</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">效果如下：</font></font><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+手動選擇控制點（紅點就是我們選中的點）</font></font><br>
+<img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729003611555-512117257.png"></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">配準效果</font></font><br>
+<img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729003629774-2030183701.png"></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">再換個圖試試吧</font></font></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">控制點選擇</font></font><br>
+<img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729003725477-1679189597.png"></p>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">配準效果</font></font><br>
+<img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729003832477-593863719.png"></p>
+<p>这么一个简易手动配准工具1.0算是完成了。但是我们使用时遇到了新的问题，那就是需要两幅图的尺寸太大了，显示器根本没法显示完整个图像！有人会说，把图像缩小再配准不行吗？缩小再配准的话，精度就不能保证了，因为配准时像素级别的。要精确配准，就得用原图。</p>
+<p>可惜opencv没有提供浏览大图的工具，那就只能自己再写一写了。</p>
+<p>好在可以借助前辈们的经验<br>
+<a href="http://blog.csdn.net/chenyusiyuan/article/details/6565424" class="uri">http://blog.csdn.net/chenyusiyuan/article/details/6565424</a></p>
+<p>那就在原来代码的基础加点东西，来适应这种“浏览大图的效果”。但是其中需要改动的东西很多，所以1.0的代码几乎全改了。因为前辈的这种浏览大图的效果是拥塞的，只能在一幅图操作完之后才可以操作另一幅图，这个限制对于我们配准操作而言是无法接受的，所以我使用了多线程来操作这个窗口，使得我们可以随意在任何一张图片打点，随时切换。</p>
+<p>下面是手动配准工具2.0版本的代码</p>
+<p>main.cpp</p>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"opencv2/highgui/highgui.hpp"</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"opencv2/imgproc/imgproc.hpp"</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"opencv2/opencv.hpp"</span>  </span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;Windows.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"NewWindows.h"</span></span><font></font>
+<font></font>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> cv;<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CreateWindows</span><span class="hljs-params">(<span class="hljs-keyword">char</span>* s, <span class="hljs-keyword">char</span>* pic)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CreateWindows2</span><span class="hljs-params">(<span class="hljs-keyword">char</span>* s, <span class="hljs-keyword">char</span>* pic)</span></span>;<font></font>
+<font></font>
+<span class="hljs-built_in">vector</span>&lt;Point2f&gt; imagePoints1, imagePoints2;  <span class="hljs-comment">//记录匹配点</span><font></font>
+<font></font>
+<font></font>
+<span class="hljs-function">DWORD WINAPI <span class="hljs-title">ThreadFun1</span><span class="hljs-params">(LPVOID pM)</span>
+</span>{
+    <span class="hljs-function">NewWindow <span class="hljs-title">ref_obj</span><span class="hljs-params">(<span class="hljs-string">"基准"</span>, <span class="hljs-string">"ref.jpg"</span>)</span></span>;<font></font>
+    ref_obj.CreateWindows();<font></font>
+    imagePoints1 = ref_obj.imagePoints;<font></font>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-function">DWORD WINAPI <span class="hljs-title">ThreadFun2</span><span class="hljs-params">(LPVOID pM)</span>
+</span>{
+    <span class="hljs-function">NewWindow <span class="hljs-title">src_obj</span><span class="hljs-params">(<span class="hljs-string">"待变换"</span>, <span class="hljs-string">"src.jpg"</span>)</span></span>;<font></font>
+    src_obj.CreateWindows();<font></font>
+    imagePoints2 = src_obj.imagePoints;<font></font>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">HandSlectPoint</span><span class="hljs-params">()</span>
+</span>{<font></font>
+<font></font>
+    Mat tsrc1 = imread(<span class="hljs-string">"ref.jpg"</span>);  <span class="hljs-comment">//基准图</span>
+    Mat tsrc2 = imread(<span class="hljs-string">"src.jpg"</span>);<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>)<font></font>
+    {<font></font>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">if</span> 1</span><font></font>
+        imagePoints1.clear();<font></font>
+        imagePoints2.clear();<font></font>
+<font></font>
+        HANDLE handle1 = CreateThread(<span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, ThreadFun1, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>);  <span class="hljs-comment">//创建线程</span><font></font>
+<font></font>
+        HANDLE handle2 = CreateThread(<span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, ThreadFun2, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>);<font></font>
+<font></font>
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"往下执行？\n"</span>);<font></font>
+<font></font>
+        <span class="hljs-comment">//先拥塞住，点选完再进行计算变换矩阵</span>
+        <span class="hljs-built_in">string</span> s;
+        <span class="hljs-built_in">cin</span> &gt;&gt; s;<font></font>
+<font></font>
+        Mat homo = findHomography(imagePoints2, imagePoints1, CV_RANSAC);<font></font>
+<font></font>
+        Mat imageTransform1;<font></font>
+        warpPerspective(tsrc2, imageTransform1, homo, Size(tsrc1.cols, tsrc1.rows));<font></font>
+        imwrite(<span class="hljs-string">"trans.jpg"</span>, imageTransform1); <span class="hljs-comment">//把配准后结果存起来</span><font></font>
+<font></font>
+        CloseHandle(handle1);<span class="hljs-comment">//销毁线程1  </span>
+        CloseHandle(handle2);<span class="hljs-comment">//销毁线程1  </span><font></font>
+<font></font>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"是否结束？\n"</span>);<font></font>
+<font></font>
+        <span class="hljs-comment">//判断是否结束，如果点选得不好，就再来一次</span>
+        <span class="hljs-built_in">string</span> str;
+        <span class="hljs-built_in">cin</span> &gt;&gt; str;
+        <span class="hljs-keyword">if</span> (str == <span class="hljs-string">"yes"</span>)
+            <span class="hljs-keyword">break</span>;<font></font>
+<font></font>
+    }<font></font>
+<font></font>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span>
+</span>{<font></font>
+    HandSlectPoint();<font></font>
+<font></font>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<font></font>
+}<font></font>
+<font></font>
+<font></font>
+</code></pre>
+<p>NewWindows.cpp</p>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"NewWindows.h"</span></span><font></font>
+<font></font>
+NewWindow::NewWindow(<span class="hljs-keyword">char</span>* label, <span class="hljs-keyword">char</span>* pic_name)<font></font>
+{<font></font>
+    <span class="hljs-keyword">this</span>-&gt;pic_name = pic_name;
+    <span class="hljs-keyword">this</span>-&gt;label = label;<font></font>
+}<font></font>
+<font></font>
+<font></font>
+<font></font>
+<span class="hljs-keyword">void</span> NewWindow::mouse_callback(<span class="hljs-keyword">int</span> event, <span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">void</span>* param)<font></font>
+{<font></font>
+  <font></font>
+    p = Point(x, y);<font></font>
+    pp = Point(x + x_offset, y + y_offset);<font></font>
+    <span class="hljs-keyword">if</span> (needScroll)<font></font>
+    {<font></font>
+        <span class="hljs-keyword">switch</span> (event)<font></font>
+        {<font></font>
+        <span class="hljs-keyword">case</span> CV_EVENT_RBUTTONDOWN:<font></font>
+            mx = x, my = y;<font></font>
+            dx = <span class="hljs-number">0</span>, dy = <span class="hljs-number">0</span>;
+            <span class="hljs-comment">// 按下左键时光标定位在水平滚动条区域内  </span>
+            <span class="hljs-keyword">if</span> (x &gt;= rect_bar_horiz.x &amp;&amp; x &lt;= rect_bar_horiz.x + rect_bar_horiz.width<font></font>
+                &amp;&amp; y &gt;= rect_bar_horiz.y &amp;&amp; y &lt;= rect_bar_horiz.y + rect_bar_horiz.height)<font></font>
+            {<font></font>
+                clickHorizBar = <span class="hljs-literal">true</span>;<font></font>
+            }<font></font>
+            <span class="hljs-comment">// 按下左键时光标定位在垂直滚动条区域内  </span>
+            <span class="hljs-keyword">if</span> (x &gt;= rect_bar_verti.x &amp;&amp; x &lt;= rect_bar_verti.x + rect_bar_verti.width<font></font>
+                &amp;&amp; y &gt;= rect_bar_verti.y &amp;&amp; y &lt;= rect_bar_verti.y + rect_bar_verti.height)<font></font>
+            {<font></font>
+                clickVertiBar = <span class="hljs-literal">true</span>;<font></font>
+            }<font></font>
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> CV_EVENT_MOUSEMOVE:
+            <span class="hljs-keyword">if</span> (clickHorizBar)<font></font>
+            {<font></font>
+                dx = <span class="hljs-built_in">fabs</span>(x - mx) &gt; <span class="hljs-number">1</span> ? (<span class="hljs-keyword">int</span>)(x - mx) : <span class="hljs-number">0</span>;<font></font>
+                dy = <span class="hljs-number">0</span>;<font></font>
+            }<font></font>
+            <span class="hljs-keyword">if</span> (clickVertiBar)<font></font>
+            {<font></font>
+                dx = <span class="hljs-number">0</span>;<font></font>
+                dy = <span class="hljs-built_in">fabs</span>(y - my) &gt; <span class="hljs-number">1</span> ? (<span class="hljs-keyword">int</span>)(y - my) : <span class="hljs-number">0</span>;<font></font>
+            }<font></font>
+            mx = x, my = y;<font></font>
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> CV_EVENT_RBUTTONUP:<font></font>
+            mx = x, my = y;<font></font>
+            dx = <span class="hljs-number">0</span>, dy = <span class="hljs-number">0</span>;<font></font>
+            clickHorizBar = <span class="hljs-literal">false</span>;<font></font>
+            clickVertiBar = <span class="hljs-literal">false</span>;
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> CV_EVENT_LBUTTONDOWN:<font></font>
+            <font></font>
+            <font></font>
+            <span class="hljs-comment">//cvShowImage("jizuhn",dst_img);</span><font></font>
+            imagePoints.push_back(pp);<font></font>
+            <span class="hljs-built_in">cout</span> &lt;&lt; label &lt;&lt;<span class="hljs-string">": "</span>&lt;&lt; pp &lt;&lt; <span class="hljs-built_in">endl</span>;
+            <span class="hljs-comment">//_p1count++;</span>
+            <span class="hljs-comment">//cout &lt;&lt; "zhihuan count:" &lt;&lt; _p1count &lt;&lt; endl;</span>
+            flag = <span class="hljs-number">1</span>;
+            <span class="hljs-comment">//dx = 0, dy = 0;</span>
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:<font></font>
+            dx = <span class="hljs-number">0</span>, dy = <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">break</span>;<font></font>
+        }<font></font>
+    }<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-keyword">void</span> NewWindow::myShowImageScroll(<span class="hljs-keyword">char</span>* title, IplImage* src_img, <span class="hljs-keyword">int</span> winWidth, <span class="hljs-keyword">int</span> winHeight ) <span class="hljs-comment">// 显示窗口大小默认为 1400×700  </span><font></font>
+{<font></font>
+    CvRect  rect_dst,   <span class="hljs-comment">// 窗口中有效的图像显示区域  </span>
+        rect_src;   <span class="hljs-comment">// 窗口图像对应于源图像中的区域  </span>
+    <span class="hljs-keyword">int</span> imgWidth = src_img-&gt;width,<font></font>
+        imgHeight = src_img-&gt;height,<font></font>
+        barWidth = <span class="hljs-number">25</span>;  <span class="hljs-comment">// 滚动条的宽度（像素）  </span>
+    <span class="hljs-keyword">double</span>  scale_w = (<span class="hljs-keyword">double</span>)imgWidth / (<span class="hljs-keyword">double</span>)winWidth,    <span class="hljs-comment">// 源图像与窗口的宽度比值  </span>
+        scale_h = (<span class="hljs-keyword">double</span>)imgHeight / (<span class="hljs-keyword">double</span>)winHeight;  <span class="hljs-comment">// 源图像与窗口的高度比值  </span><font></font>
+<font></font>
+    <span class="hljs-keyword">if</span> (scale_w&lt;<span class="hljs-number">1</span>)<font></font>
+        winWidth = imgWidth + barWidth;<font></font>
+    <span class="hljs-keyword">if</span> (scale_h&lt;<span class="hljs-number">1</span>)<font></font>
+        winHeight = imgHeight + barWidth;<font></font>
+<font></font>
+    <span class="hljs-keyword">int</span> showWidth = winWidth, showHeight = winHeight; <span class="hljs-comment">// rect_dst 的宽和高  </span>
+    <span class="hljs-keyword">int</span> src_x = <span class="hljs-number">0</span>, src_y = <span class="hljs-number">0</span>;   <span class="hljs-comment">// 源图像中 rect_src 的左上角位置  </span>
+    <span class="hljs-keyword">int</span> horizBar_width = <span class="hljs-number">0</span>, horizBar_height = <span class="hljs-number">0</span>,<font></font>
+        vertiBar_width = <span class="hljs-number">0</span>, vertiBar_height = <span class="hljs-number">0</span>;<font></font>
+<font></font>
+    needScroll = scale_w&gt;<span class="hljs-number">1.0</span> || scale_h&gt;<span class="hljs-number">1.0</span> ? TRUE : FALSE;
+    <span class="hljs-comment">// 若图像大于设定的窗口大小，则显示滚动条  </span>
+    <span class="hljs-keyword">if</span> (needScroll)<font></font>
+    {<font></font>
+        IplImage* dst_img = cvCreateImage(cvSize(winWidth, winHeight), src_img-&gt;depth, src_img-&gt;nChannels);<font></font>
+        cvZero(dst_img);<font></font>
+        <span class="hljs-comment">// 源图像宽度大于窗口宽度，则显示水平滚动条  </span>
+        <span class="hljs-keyword">if</span> (<span class="hljs-number">1</span>)<font></font>
+        {<font></font>
+            showHeight = winHeight - barWidth;<font></font>
+            horizBar_width = (<span class="hljs-keyword">int</span>)((<span class="hljs-keyword">double</span>)winWidth / scale_w);<font></font>
+            horizBar_height = winHeight - showHeight;<font></font>
+            horizBar_x = min(<font></font>
+                max(<span class="hljs-number">0</span>, horizBar_x + dx),<font></font>
+                winWidth - horizBar_width);<font></font>
+            rect_bar_horiz = cvRect(<font></font>
+                horizBar_x,<font></font>
+                showHeight + <span class="hljs-number">1</span>,<font></font>
+                horizBar_width,<font></font>
+                horizBar_height);<font></font>
+            <span class="hljs-comment">// 显示水平滚动条  </span>
+            cvRectangleR(dst_img, rect_bar_horiz, cvScalarAll(<span class="hljs-number">255</span>), <span class="hljs-number">-1</span>);<font></font>
+        }<font></font>
+<font></font>
+        <span class="hljs-comment">// 源图像高度大于窗口高度，则显示垂直滚动条  </span>
+        <span class="hljs-keyword">if</span> (scale_h &gt; <span class="hljs-number">1.0</span>)<font></font>
+        {<font></font>
+            <span class="hljs-comment">// printf("come!\n");</span><font></font>
+            showWidth = winWidth - barWidth;<font></font>
+            vertiBar_width = winWidth - showWidth;<font></font>
+            vertiBar_height = (<span class="hljs-keyword">int</span>)((<span class="hljs-keyword">double</span>)winHeight / scale_h);<font></font>
+            vertiBar_y = min(<font></font>
+                max(<span class="hljs-number">0</span>, vertiBar_y + dy),<font></font>
+                winHeight - vertiBar_height);<font></font>
+            <span class="hljs-comment">//printf("vertiBar_width:%d vertiBar_height:%d\n", vertiBar_width, vertiBar_height);</span>
+            <span class="hljs-comment">//printf("x:%d y:%d\n", showWidth + 1, vertiBar_y);</span><font></font>
+            rect_bar_verti = cvRect(<font></font>
+                showWidth + <span class="hljs-number">1</span>,<font></font>
+                vertiBar_y,<font></font>
+                vertiBar_width,<font></font>
+                vertiBar_height);<font></font>
+            <span class="hljs-comment">// 显示垂直滚动条  </span>
+            <span class="hljs-comment">//printf("w:%d h:%d\n", dst_img-&gt;width, dst_img-&gt;height);</span>
+            cvRectangleR(dst_img, rect_bar_verti, cvScalarAll(<span class="hljs-number">255</span>), <span class="hljs-number">-1</span>);<font></font>
+        }<font></font>
+<font></font>
+        showWidth = min(showWidth, imgWidth);<font></font>
+        showHeight = min(showHeight, imgHeight);<font></font>
+        <span class="hljs-comment">// 设置窗口显示区的 ROI  </span>
+        rect_dst = cvRect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, showWidth, showHeight);<font></font>
+        cvSetImageROI(dst_img, rect_dst);<font></font>
+        <span class="hljs-comment">// 设置源图像的 ROI  </span>
+        src_x = (<span class="hljs-keyword">int</span>)((<span class="hljs-keyword">double</span>)horizBar_x*scale_w);<font></font>
+        src_y = (<span class="hljs-keyword">int</span>)((<span class="hljs-keyword">double</span>)vertiBar_y*scale_h);<font></font>
+        src_x = min(src_x, imgWidth - showWidth);<font></font>
+        src_y = min(src_y, imgHeight - showHeight);<font></font>
+        rect_src = cvRect(src_x, src_y, showWidth, showHeight);<font></font>
+        x_offset = src_x;<font></font>
+        y_offset = src_y;<font></font>
+        cvSetImageROI(src_img, rect_src);<font></font>
+        <span class="hljs-keyword">if</span> (flag == <span class="hljs-number">1</span>)<font></font>
+        {<font></font>
+            cvCircle(src_img, p, <span class="hljs-number">3</span>, Scalar(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>), <span class="hljs-number">-1</span>);<font></font>
+            flag = <span class="hljs-number">0</span>;<font></font>
+        }<font></font>
+        <span class="hljs-comment">// 将源图像内容复制到窗口显示区  </span><font></font>
+        cvCopy(src_img, dst_img);<font></font>
+<font></font>
+        cvResetImageROI(dst_img);<font></font>
+        cvResetImageROI(src_img);<font></font>
+        <span class="hljs-comment">// 显示图像和滚动条  </span><font></font>
+        cvShowImage(title, dst_img);<font></font>
+<font></font>
+        cvReleaseImage(&amp;dst_img);<font></font>
+    }<font></font>
+    <span class="hljs-comment">// 源图像小于设定窗口，则直接显示图像，无滚动条  </span>
+    <span class="hljs-keyword">else</span><font></font>
+    {<font></font>
+        cvShowImage(title, src_img);<font></font>
+    }<font></font>
+}<font></font>
+<font></font>
+<font></font>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">m_callback</span><span class="hljs-params">(<span class="hljs-keyword">int</span> event, <span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">void</span>* param)</span>
+</span>{<font></font>
+    NewWindow* p_win = (NewWindow*)param;<font></font>
+    p_win-&gt;mouse_callback(event, x, y, flags, <span class="hljs-literal">NULL</span>);<font></font>
+}<font></font>
+<font></font>
+<span class="hljs-keyword">void</span> NewWindow::CreateWindows()<font></font>
+{<font></font>
+    <span class="hljs-keyword">int</span> width = <span class="hljs-number">1200</span>, height = <span class="hljs-number">700</span>;  <span class="hljs-comment">//显示的图片大小</span><font></font>
+<font></font>
+    cvNamedWindow(label, <span class="hljs-number">1</span>);<font></font>
+<font></font>
+    cvSetMouseCallback(label, m_callback, <span class="hljs-keyword">this</span>);<font></font>
+<font></font>
+    image = cvLoadImage(pic_name, CV_LOAD_IMAGE_COLOR);<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>)<font></font>
+    {<font></font>
+        myShowImageScroll(label, image, width, height);<font></font>
+        <span class="hljs-comment">//Sleep(100);</span>
+        <span class="hljs-keyword">int</span> KEY = cvWaitKey(<span class="hljs-number">10</span>);
+        <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">char</span>)KEY == <span class="hljs-number">27</span>)
+            <span class="hljs-keyword">break</span>;<font></font>
+    }<font></font>
+<font></font>
+    cvDestroyWindow(label);<font></font>
+}<font></font>
+<font></font>
+</code></pre>
+<p>NewWindows.h</p>
+<pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">ifndef</span> __NEW_WINDOWS_H__</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> __NEW_WINDOWS_H__</span><font></font>
+<font></font>
+<font></font>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;opencv2/highgui/highgui.hpp&gt;  </span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;opencv2/imgproc/imgproc_c.h&gt;  </span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;Windows.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;  </span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;  </span></span><font></font>
+<font></font>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> FALSE 0</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> TRUE 1</span><font></font>
+<font></font>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> cv;<font></font>
+<font></font>
+<font></font>
+<font></font>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NewWindow</span>
+{</span>
+<span class="hljs-keyword">public</span>:
+    <span class="hljs-built_in">vector</span>&lt;Point2f&gt; imagePoints;
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CreateWindows</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">mouse_callback</span><span class="hljs-params">(<span class="hljs-keyword">int</span> event, <span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">void</span>* param)</span></span>;<font></font>
+    NewWindow(<span class="hljs-keyword">char</span>* label, <span class="hljs-keyword">char</span>* pic_name);<font></font>
+<font></font>
+<span class="hljs-keyword">private</span>:
+    <span class="hljs-keyword">double</span> mx = <span class="hljs-number">0</span>, my = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">int</span> dx = <span class="hljs-number">0</span>, dy = <span class="hljs-number">0</span>, horizBar_x = <span class="hljs-number">0</span>, vertiBar_y = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">bool</span> clickVertiBar = <span class="hljs-literal">false</span>, clickHorizBar = <span class="hljs-literal">false</span>, needScroll = <span class="hljs-literal">false</span>;<font></font>
+    CvRect rect_bar_horiz, rect_bar_verti;<font></font>
+    IplImage* image;<font></font>
+<font></font>
+    Point  p;<font></font>
+    Point pp;<font></font>
+    <span class="hljs-keyword">int</span> flag = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">int</span> x_offset;
+    <span class="hljs-keyword">int</span> y_offset;
+    <span class="hljs-keyword">char</span>* pic_name;
+    <span class="hljs-keyword">char</span>* label;<font></font>
+<font></font>
+<font></font>
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">myShowImageScroll</span><span class="hljs-params">(<span class="hljs-keyword">char</span>* title, IplImage* src_img,
+        <span class="hljs-keyword">int</span> winWidth = <span class="hljs-number">1400</span>, <span class="hljs-keyword">int</span> winHeight = <span class="hljs-number">700</span>)</span></span>; <span class="hljs-comment">// 显示窗口大小默认为 1400×700  </span><font></font>
+<font></font>
+};<font></font>
+<font></font>
+<font></font>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></code></pre>
+<p>看看效果吧，现在我们需要对两张2000*2000的图像进行配准，因为我们的显示器无法完全显示整张图片，所以使用了这个带浏览大图的工具来进行配准。可以看到，显示图的右侧和下侧都有滚动条，我们只需按住鼠标右键拖动即可浏览到显示不到的区域，同样地，我们是点击鼠标左键实现选点。</p>
+<p><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729004509727-583527393.png"></p>
+<p><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729003943461-714523754.png"></p>
+<p>点的坐标一一记录</p>
+<p><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729003959821-915923676.png"></p>
+<p>配准之后，可以看出图像发生了轻微形变，与基准图一对比，发现配准成功。<br>
+<img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/1093303-20170729004026665-475562414.png"></p>
+<p>【2017.9.23更新】</p>
+<p>有几个园友发信息给我，说不知这个程序怎么用，那我在这里总结一下使用步骤：</p>
+<p>1.左键选择控制点，右键是用于滚动条的。选择控制点的时候注意在图一选了点后需要在图二也选好对应点，形成控制点对。</p>
+<p>2.当控制点对全部选好后按“esc”关闭窗口。要按两次，因为要关闭两个窗口。</p>
+<p>3.按键盘任意键开始透视变换。</p>
+<p>4.如果你觉得这次变换OK，就按yes退出</p>
+</div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="https://www.cnblogs.com/skyfsm/category/1000207.html" target="_blank">opencv探索</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(7253208,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">好文要頂</font></font></a>
+            <a id="green_channel_follow" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;);" href="javascript:void(0);"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">關注我</font></font></a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">收藏該文</font></font></a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/skyfsm/" target="_blank"><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/20170109193150.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/skyfsm/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Madcola </font></font></a><br>
+            <a href="https://home.cnblogs.com/u/skyfsm/followees"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">關注- 30 </font></font></a><br>
+            <a href="https://home.cnblogs.com/u/skyfsm/followers"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">粉絲- 1290</font></font></a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;);return false;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">+加關注</font></font></a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(7253208,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1</font></font></span>
+    </div>
+    <div class="buryit" onclick="votePost(7253208,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0</font></font></span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="https://www.cnblogs.com/skyfsm/p/7182313.html" class="p_n_p_prefix"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">«</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">上一篇：</font></font><a href="https://www.cnblogs.com/skyfsm/p/7182313.html" title="發佈於2017-07-15 12:27"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Opencv探索之路（十九）：讀寫xml和yml文件</font></font></a><br><a href="https://www.cnblogs.com/skyfsm/p/7263773.html" class="p_n_p_prefix"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">»</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">下一篇：</font></font><a href="https://www.cnblogs.com/skyfsm/p/7263773.html" title="發佈於2017-07-31 16:21"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OpenCV探索之路（二十一）如何生成能在無opencv環境下運行的exe</font></font></a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">posted @ </font></font><span id="post-date"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017-07-29 00:41 </font></font></span> <a href="https://www.cnblogs.com/skyfsm/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Madcola</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">閱讀( </font></font><span id="post_view_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8496</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> )評論( </font></font><span id="post_comment_count"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">12</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> )   </font></font><a href="https://i.cnblogs.com/EditPosts.aspx?postid=7253208" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">編輯</font></font></a> <a href="https://www.cnblogs.com/skyfsm/p/7253208.html#" onclick="AddToWz(7253208);return false;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">收藏</font></font></a></div>
+	</div>
+	<script src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/highlight.min.js.下載"></script><script>markdown_highlight();</script><script type="text/javascript">var allowComments=true,cb_blogId=327280,cb_entryId=7253208,cb_blogApp=currentBlogApp,cb_blogUserGuid='0615e00a-49d6-e611-845c-ac853d9f53ac',cb_entryCreatedDate='2017/7/29 0:41:00';loadViewCount(cb_entryId);var cb_postType=1;var isMarkdown=true;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<br>
+<div class="feedback_area_title"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">評論列表</font></font></div>
+<div class="feedbackNoItems"></div>	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3746108" class="layer"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">#1樓</font></font></a><a name="3746108" id="comment_anchor_3746108"></a>  <span class="comment_date"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017-07-29 11:34 </font></font></span> <a id="a_comment_author_3746108" href="http://home.cnblogs.com/u/238503/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">liushou007</font></font></a> <a href="http://msg.cnblogs.com/send/liushou007" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3746108" class="blog_comment_body"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">博主，很辛苦。</font><font style="vertical-align: inherit;">凌晨發博文！</font><font style="vertical-align: inherit;">！</font><font style="vertical-align: inherit;">值得我們學習。</font><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">《Opencv探索之路》非常棒！</font><font style="vertical-align: inherit;">！</font></font></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3746108,&#39;Digg&#39;,this)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">支持(0) </font></font></a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3746108,&#39;Bury&#39;,this)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">反對(0)</font></font></a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794433" class="layer"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">#2樓</font></font></a><a name="3794433" id="comment_anchor_3794433"></a>  <span class="comment_date"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017-09-23 21:23 </font></font></span> <a id="a_comment_author_3794433" href="http://home.cnblogs.com/u/1246488/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">mengxiagogo</font></font></a> <a href="http://msg.cnblogs.com/send/mengxiagogo" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794433" class="blog_comment_body"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">請問博主你的第二個程序怎樣使用，看了下main也沒找到。</font><font style="vertical-align: inherit;">提示往下執行，什麼都沒幹，然後可以點擊並記錄若干對點，然後呢？</font><font style="vertical-align: inherit;">怎麼進行下去？</font></font></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794433,&#39;Digg&#39;,this)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">支持(0) </font></font></a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794433,&#39;Bury&#39;,this)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">反對(0)</font></font></a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794464" class="layer"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">#3樓</font></font></a><a name="3794464" id="comment_anchor_3794464"></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">[ </font></font><span class="louzhu"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">樓主</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ]   </font></font><span class="comment_date"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017-09-23 22:17 </font></font></span> <a id="a_comment_author_3794464" href="https://www.cnblogs.com/skyfsm/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Madcola</font></font></a> <a href="http://msg.cnblogs.com/send/Madcola" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794464" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794433" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3794433);">@</a>
+mengxiagogo<br>我说一下步骤：<br>1.左键选择控制点，右键是用于滚动条的。选择控制点的时候注意在图一选了点后需要在图二也选好对应点，形成控制点对。<br><br>2.选好点后按“esc”关闭窗口。要按两次，因为要关闭两个窗口。<br><br>3.按键盘任意键开始透视变换。<br><br>4.如果你觉得这次变换OK，就按yes退出</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794464,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794464,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3794464_avatar" style="display:none;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://pic.cnblogs.com/face/1093303/20170109193150.png</font></font></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794473" class="layer">#4楼</a><a name="3794473" id="comment_anchor_3794473"></a>  <span class="comment_date">2017-09-23 22:28</span> <a id="a_comment_author_3794473" href="http://home.cnblogs.com/u/1246488/" target="_blank">mengxiagogo</a> <a href="http://msg.cnblogs.com/send/mengxiagogo" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794473" class="blog_comment_body">想不到前辈回复这么快，谢谢！<br>我esc按两次这个没问题，窗口destroy了。然后按任意键这个好像没反应，在exe窗口也没有“是否结束”几个字，键入yes试了下就报错中断退出了。。。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794473,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794473,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794475" class="layer">#5楼</a><a name="3794475" id="comment_anchor_3794475"></a>  <span class="comment_date">2017-09-23 22:29</span> <a id="a_comment_author_3794475" href="http://home.cnblogs.com/u/1246488/" target="_blank">mengxiagogo</a> <a href="http://msg.cnblogs.com/send/mengxiagogo" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794475" class="blog_comment_body">谢谢博主，opencv的问题我也发现了，去翻了下document就在2.几版本找到那两个库了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794475,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794475,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794504" class="layer">#6楼</a><a name="3794504" id="comment_anchor_3794504"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2017-09-23 22:57</span> <a id="a_comment_author_3794504" href="https://www.cnblogs.com/skyfsm/" target="_blank">Madcola</a> <a href="http://msg.cnblogs.com/send/Madcola" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794504" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794473" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3794473);">@</a>
+mengxiagogo<br>报的是什么错误呢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794504,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794504,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3794504_avatar" style="display:none;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://pic.cnblogs.com/face/1093303/20170109193150.png</font></font></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794507" class="layer">#7楼</a><a name="3794507" id="comment_anchor_3794507"></a>  <span class="comment_date">2017-09-23 23:03</span> <a id="a_comment_author_3794507" href="http://home.cnblogs.com/u/1246488/" target="_blank">mengxiagogo</a> <a href="http://msg.cnblogs.com/send/mengxiagogo" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794507" class="blog_comment_body">0x74B4B802 处(位于 byhand.exe 中)有未经处理的异常: Microsoft C++ 异常: cv::Exception，位于内存位置 0x0099E208 处。<br><br>我一般遇到opencv读取图片失败，或者没有把图片放在指定位置就会报这个错误，不过我这次已经放在项目同名文件夹下了，之前选点是没问题的。<br><br>问题是esc之后exe黑色窗口不是该显示“是否结束”么，这时才输入yes。而我是完全没反应，所以刚刚yes也是随便试试的，没有用</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794507,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794507,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794517" class="layer">#8楼</a><a name="3794517" id="comment_anchor_3794517"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2017-09-23 23:17</span> <a id="a_comment_author_3794517" href="https://www.cnblogs.com/skyfsm/" target="_blank">Madcola</a> <a href="http://msg.cnblogs.com/send/Madcola" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794517" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794507" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3794507);">@</a>
+mengxiagogo<br>按esc关闭后应该看到的是“往下执行？”，此时你按任意键即可，比如按"a"。然后会进行投射变换，才会弹出“”是否退出”？<br><br>这个步骤确定做对了吗</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794517,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794517,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3794517_avatar" style="display:none;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://pic.cnblogs.com/face/1093303/20170109193150.png</font></font></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794519" class="layer">#9楼</a><a name="3794519" id="comment_anchor_3794519"></a>  <span class="comment_date">2017-09-23 23:23</span> <a id="a_comment_author_3794519" href="http://home.cnblogs.com/u/1246488/" target="_blank">mengxiagogo</a> <a href="http://msg.cnblogs.com/send/mengxiagogo" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794519" class="blog_comment_body">往下执行难道不是第一行么，一开始就出现了呀，然后下面一行行显示基准点和待校准点，和您这篇文章最后倒数第二张图是一样的。<br>摁a就显示在这个黑窗口，没反应，摁a再摁enter就报刚刚那个错了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794519,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794519,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794524" class="layer">#10楼</a><a name="3794524" id="comment_anchor_3794524"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2017-09-23 23:27</span> <a id="a_comment_author_3794524" href="https://www.cnblogs.com/skyfsm/" target="_blank">Madcola</a> <a href="http://msg.cnblogs.com/send/Madcola" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794524" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794519" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3794519);">@</a>
+mengxiagogo<br>站内截图给我看看。<br>还有就是确认一下会不会是版本问题，我的环境是2.413</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794524,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794524,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3794524_avatar" style="display:none;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://pic.cnblogs.com/face/1093303/20170109193150.png</font></font></span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794527" class="layer">#11楼</a><a name="3794527" id="comment_anchor_3794527"></a>  <span class="comment_date">2017-09-23 23:36</span> <a id="a_comment_author_3794527" href="http://home.cnblogs.com/u/1246488/" target="_blank">mengxiagogo</a> <a href="http://msg.cnblogs.com/send/mengxiagogo" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794527" class="blog_comment_body">好像要申请开通博客才能上传图片，要工作时间才比较快。只能改天了，我用的2.4.9。我试一下2413再与您交流。然后再问一下您的电脑是64位？然后编译和配置opencv时选的32还是64，debug还是release</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794527,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794527,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794530" class="layer">#12楼</a><a name="3794530" id="comment_anchor_3794530"></a>[<span class="louzhu">楼主</span>]<span id="comment-maxId" style="display:none;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3794530</font></font></span><span id="comment-maxDate" style="display:none;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017/9/23 23:38:05</font></font></span>  <span class="comment_date">2017-09-23 23:38</span> <a id="a_comment_author_3794530" href="https://www.cnblogs.com/skyfsm/" target="_blank">Madcola</a> <a href="http://msg.cnblogs.com/send/Madcola" title="發送站內短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3794530" class="blog_comment_body"><a href="https://www.cnblogs.com/skyfsm/p/7253208.html#3794527" title="查看所回复的評論" onclick="commentManager.renderComments(0,50,3794527);">@</a>
+mengxiagogo<br>我用的是64位。选debug</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3794530,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3794530,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3794530_avatar" style="display:none;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://pic.cnblogs.com/face/1093303/20170109193150.png</font></font></span>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/skyfsm/p/7253208.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/skyfsm/p/7253208.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-工控&#39;)">【推荐】超50万C++/C#源码: 大型实时仿真组态图形源码</a><br><a href="https://www.grapecity.com.cn/developer/spreadjs?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=SpreadJS&amp;utm_campaign=community" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-SpreadJS&#39;)">【前端】SpreadJS表格控件，可嵌入系统开发的在线Excel</a><br><a href="https://gitee.com/enterprises?from=bky-1" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-gitee&#39;)">【推荐】码云企业版，高效的企业级软件协作开发管理平台</a><br><a href="https://q.cnblogs.com/" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-博问&#39;)">【推荐】程序员问答平台，解决您开发中遇到的技术难题</a><br></div>
+<div id="opt_under_post"></div>
+<script async="async" src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/gpt.js.下載"></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+<script>
+  googletag.cmd.push(function() {
+        googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1546353474406-0').addService(googletag.pubads());
+        googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+  });
+</script>
+<div id="cnblogs_c1" class="c_ad_block">
+    <div id="div-gpt-ad-1546353474406-0" style="height:250px; width:300px;" data-google-query-id="COPXy7n-teMCFcgavAodPfcHEA"><div id="google_ads_iframe_/1090369/C1_0__container__" style="border: 0pt none;"><iframe id="google_ads_iframe_/1090369/C1_0" title="3rd party ad content" name="google_ads_iframe_/1090369/C1_0" width="300" height="250" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" style="border: 0px; vertical-align: bottom;" data-google-container-id="1" data-load-complete="true" src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/saved_resource(1).html"></iframe></div></div>
+</div>
+<div id="under_post_news"><div class="recomm-block"><b><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">相關博文：</font></font></b><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://www.cnblogs.com/jaww/p/9648408.html" target="_blank" onclick="clickRecomItmem(9648408)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">製作一個類“全能掃描王”的簡易掃描軟件(opencv)</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://www.cnblogs.com/skyfsm/p/6884253.html" target="_blank" onclick="clickRecomItmem(6884253)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OpenCV探索之路（九）：模板匹配</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://www.cnblogs.com/skyfsm/p/8097397.html" target="_blank" onclick="clickRecomItmem(8097397)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OpenCV探索之路（二十八）：Bag of Features(BoF)圖像分類實踐</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://www.cnblogs.com/skyfsm/p/7868877.html" target="_blank" onclick="clickRecomItmem(7868877)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OpenCV探索之路（二十七）：皮膚檢測技術</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://www.cnblogs.com/skyfsm/p/6882853.html" target="_blank" onclick="clickRecomItmem(6882853)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OpenCV探索之路（八）：重映射與仿射變換</font></font></a><br></div></div>
+<div id="cnblogs_c2" class="c_ad_block">
+    <div id="div-gpt-ad-1539008685004-0" style="height:60px; width:468px;" data-google-query-id="COTXy7n-teMCFcgavAodPfcHEA"><div id="google_ads_iframe_/1090369/C2_0__container__" style="border: 0pt none; display: inline-block; width: 320px; height: 50px;"><iframe frameborder="0" src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/container.html" id="google_ads_iframe_/1090369/C2_0" title="3rd party ad content" name="" scrolling="no" marginwidth="0" marginheight="0" width="320" height="50" data-is-safeframe="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" data-google-container-id="2" style="border: 0px; vertical-align: bottom;" data-load-complete="true"></iframe></div></div>
+</div>
+<div id="under_post_kb"><div class="itnews c_ad_block"><b><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最新新聞</font></font></b><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：</font></font><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">·   </font></font><a href="https://news.cnblogs.com/n/628247/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">紐約大停電或為系統故障所致</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://news.cnblogs.com/n/628246/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">斯坦福大學開發出超算編程語言，大大節省程序員時間和成本</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://news.cnblogs.com/n/628245/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">這家醫院的AI護士小姐姐已上線減輕人類護士30%工作量</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://news.cnblogs.com/n/628244/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5G與物聯網的“床單革命”</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ·   </font></font><a href="https://news.cnblogs.com/n/628243/" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">禍不單行！</font><font style="vertical-align: inherit;">被罰款50億美元後，Facebook還有一大波麻煩</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> » </font></font><a href="http://news.cnblogs.com/" title="IT新聞" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">更多新聞...</font></font></a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+ if(enablePostBottom()) {
+    codeHighlight();
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverT2();
+    deliverC1();
+    deliverC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);  
+}
+</script>
+</div>
+
+    
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">公告</font></font></h3>
+	<div id="blog-news"><div id="profile_block"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">暱稱：</font></font><a href="https://home.cnblogs.com/u/skyfsm/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Madcola</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">園齡：</font></font><a href="https://home.cnblogs.com/u/skyfsm/" title="入園時間：2017-01-09"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2年6個月</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">粉絲：</font></font><a href="https://home.cnblogs.com/u/skyfsm/followers/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1290</font></font></a><br><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">關注：</font></font><a href="https://home.cnblogs.com/u/skyfsm/followees/"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">30</font></font></a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;0615e00a-49d6-e611-845c-ac853d9f53ac&#39;)"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">+加關注</font></font></a></div><script>getFollowStatus('0615e00a-49d6-e611-845c-ac853d9f53ac')</script></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2019/06/01&#39;);return false;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">&lt;</font></font></a></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2019年7月</font></font></td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2019/08/01&#39;);return false;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">&gt;</font></font></a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">日</font></font></th><th class="CalDayHeader" align="center" abbr="一" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">一</font></font></th><th class="CalDayHeader" align="center" abbr="二" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">二</font></font></th><th class="CalDayHeader" align="center" abbr="三" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">三</font></font></th><th class="CalDayHeader" align="center" abbr="四" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">四</font></font></th><th class="CalDayHeader" align="center" abbr="五" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">五</font></font></th><th class="CalDayHeader" align="center" abbr="六" scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">六</font></font></th></tr><tr><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">30</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5</font></font></td><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">6</font></font></td></tr><tr><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">7</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">9</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">11</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">12</font></font></td><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">13</font></font></td></tr><tr><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14</font></font></td><td class="CalTodayDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">15</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">16</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">17</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">18</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">19</font></font></td><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">20</font></font></td></tr><tr><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">21</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">22</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">23</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">24</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">25</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">26</font></font></td><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">27</font></font></td></tr><tr><td class="CalWeekendDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">28</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">29</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">30</font></font></td><td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">31</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3</font></font></td></tr><tr><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">6</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">7</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">9</font></font></td><td class="CalOtherMonthDay" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10</font></font></td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">搜索</font></font></h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></font></font></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></font></font></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">常用鏈接</font></font></h3>
+<ul>
+<li><a href="https://www.cnblogs.com/skyfsm/p/" title="我的博客的隨筆列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我的隨筆</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/MyComments.html" title="我發表過的評論列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我的評論</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/OtherPosts.html" title="我評論過的隨筆列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我的參與</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/RecentComments.html" title="我的博客的評論列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最新評論</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/tag/" title="我的博客的標籤列表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我的標籤</font></font></a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block"></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">隨筆分類</font></font><span style="font-size:11px;font-weight:normal"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">(69)</font></font></span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="https://www.cnblogs.com/skyfsm/category/1012247.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">C++(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="https://www.cnblogs.com/skyfsm/category/1304109.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CUDA(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="https://www.cnblogs.com/skyfsm/category/935270.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Linux編程(12)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="https://www.cnblogs.com/skyfsm/category/1123384.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OCR系列(8)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="https://www.cnblogs.com/skyfsm/category/1000207.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">opencv探索(28)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="https://www.cnblogs.com/skyfsm/category/1074227.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">STL(2)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="https://www.cnblogs.com/skyfsm/category/935280.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">波折歲月(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="https://www.cnblogs.com/skyfsm/category/1309644.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">工具技巧(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="https://www.cnblogs.com/skyfsm/category/993807.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">機器學習之旅(5)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="https://www.cnblogs.com/skyfsm/category/1164360.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">深度學習(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="https://www.cnblogs.com/skyfsm/category/1085234.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">數字圖像處理(3)</font></font></a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">隨筆檔案</font></font><span style="font-size:11px;font-weight:normal"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">(69)</font></font></span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="https://www.cnblogs.com/skyfsm/archive/2019/02.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2019年2月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="https://www.cnblogs.com/skyfsm/archive/2019/01.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2019年1月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="https://www.cnblogs.com/skyfsm/archive/2018/12.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年12月(2)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="https://www.cnblogs.com/skyfsm/archive/2018/10.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年10月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="https://www.cnblogs.com/skyfsm/archive/2018/09.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年9月(3)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="https://www.cnblogs.com/skyfsm/archive/2018/05.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年5月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="https://www.cnblogs.com/skyfsm/archive/2018/04.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年4月(2)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="https://www.cnblogs.com/skyfsm/archive/2018/02.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年2月(6)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="https://www.cnblogs.com/skyfsm/archive/2018/01.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2018年1月(3)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_9" href="https://www.cnblogs.com/skyfsm/archive/2017/12.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年12月(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_10" href="https://www.cnblogs.com/skyfsm/archive/2017/11.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年11月(3)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_11" href="https://www.cnblogs.com/skyfsm/archive/2017/10.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年10月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_12" href="https://www.cnblogs.com/skyfsm/archive/2017/09.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年9月(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_13" href="https://www.cnblogs.com/skyfsm/archive/2017/08.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年8月(3)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_14" href="https://www.cnblogs.com/skyfsm/archive/2017/07.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年7月(5)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_15" href="https://www.cnblogs.com/skyfsm/archive/2017/06.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年6月(4)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_16" href="https://www.cnblogs.com/skyfsm/archive/2017/05.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年5月(17)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_17" href="https://www.cnblogs.com/skyfsm/archive/2017/04.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年4月(1)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_18" href="https://www.cnblogs.com/skyfsm/archive/2017/02.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年2月(2)</font></font></a> </li>
+
+<li><a id="CatList_LinkList_1_Link_19" href="https://www.cnblogs.com/skyfsm/archive/2017/01.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2017年1月(5)</font></font></a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_scorerank" class="sidebar-block">
+<div class="catListBlogRank">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">積分與排名</font></font></h3>
+<ul>
+	<li class="liScore"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+		積分- 211604
+	</font></font></li>
+	<li class="liRank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+		排名- 1722
+	</font></font></li>
+</ul>
+</div>
+
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">最新評論</font></font></h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/10345305.html#4300497"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1. Re:【OCR技術系列之八】端到端不定長文本識別CRNN代碼實現</font></font></a></li>
+        <li class="recent_comment_body"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">樓主你好， 請問train/test.txt裡的數據已經是數字化過了嗎？</font><font style="vertical-align: inherit;">謝謝</font></font></li>
+        <li class="recent_comment_author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--puma360</font></font></li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/10345305.html#4298249"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2. Re:【OCR技術系列之八】端到端不定長文本識別CRNN代碼實現</font></font></a></li>
+        <li class="recent_comment_body"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CNN用的是VGG16嗎？</font><font style="vertical-align: inherit;">為什麼層數有點不太一樣啊？</font></font></li>
+        <li class="recent_comment_author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--明天週六了</font></font></li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/10345305.html#4297958"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3. Re:【OCR技術系列之八】端到端不定長文本識別CRNN代碼實現</font></font></a></li>
+        <li class="recent_comment_body"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">樓主你好，想問下您是如何利用圖像處理技術手工大批量生成文字圖像的呢？</font><font style="vertical-align: inherit;">有看過您用圖像處理方法生成單字的博文，但對於生成這種不定長文本行的並且背景也有所不同的訓練數據，請問您是怎麼做到的呢，謝謝您啦</font></font></li>
+        <li class="recent_comment_author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--MrZWJax</font></font></li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/8330882.html#4297177"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4. Re:【Keras】基於SegNet和U-Net的遙感圖像語義分割</font></font></a></li>
+        <li class="recent_comment_body"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">@學藝from keras import backend as K K.set_image_dim_ordering('th') 在文件開頭加上這個原因算你用的TensorFlow 博主用的..........</font></font></li>
+        <li class="recent_comment_author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--星星之火250</font></font></li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/skyfsm/p/8330882.html#4297095"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5. Re:【Keras】基於SegNet和U-Net的遙感圖像語義分割</font></font></a></li>
+        <li class="recent_comment_body">@Tripader 在预测代码 那块， 其中分割256*256*3的 逻辑上 你没有遇到问题吗？...</li>
+        <li class="recent_comment_author">--星星之火250</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/6790245.html">1. 卷积神经网络CNN总结(216497)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6806246.html">2. 基于深度学习的目标检测技术演进：R-CNN、Fast R-CNN、Faster R-CNN(203798)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html">3. OpenCV探索之路（二十四）图像拼接和图像融合技术(85258)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8451834.html">4. CNN网络架构演进：从LeNet到DenseNet(54863)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7401523.html">5. OpenCV探索之路（二十三）：特征检测和特征匹配方法汇总(51967)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html">6. 【OCR技术系列之四】基于深度学习的文字识别（3755个汉字）(48360)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6934246.html">7. C++ STL快速入门(45017)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6879265.html">8. OpenCV探索之路（六）：边缘检测（canny、sobel、laplacian）(44107)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6287787.html">9. Linux编程之UDP SOCKET全攻略(40491)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6897313.html">10. OpenCV探索之路（十四）：绘制点、直线、几何图形(36106)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html">1. 【OCR技术系列之四】基于深度学习的文字识别（3755个汉字）(77)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8330882.html">2. 【Keras】基于SegNet和U-Net的遥感图像语义分割(69)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html">3. OpenCV探索之路（二十四）图像拼接和图像融合技术(67)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/10345305.html">4. 【OCR技术系列之八】端到端不定长文本识别CRNN代码实现(51)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8051705.html">5. 【Keras】从两个实际任务掌握图像分类(33)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="https://www.cnblogs.com/skyfsm/p/6806246.html">1. 基于深度学习的目标检测技术演进：R-CNN、Fast R-CNN、Faster R-CNN(88)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/6790245.html">2. 卷积神经网络CNN总结(60)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8443107.html">3. 【OCR技术系列之四】基于深度学习的文字识别（3755个汉字）(21)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/10202575.html">4. 我的2018：OCR、实习和秋招(20)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8330882.html">5. 【Keras】基于SegNet和U-Net的遥感图像语义分割(19)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8451834.html">6. CNN网络架构演进：从LeNet到DenseNet(18)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7411961.html">7. OpenCV探索之路（二十四）图像拼接和图像融合技术(18)</a></li><li><a href="https://www.cnblogs.com/skyfsm/p/9613894.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8. 我在北京實習的四個月(15)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/8088158.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">9. 讀研以來的一些感想：名校好在哪裡？</font><font style="vertical-align: inherit;">(13)</font></font></a></li><li><a href="https://www.cnblogs.com/skyfsm/p/7923015.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10. 【OCR技術系列之一】字符識別技術總覽(12)</font></font></a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done--><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+Copyright ©2019 Madcola
+	</font></font></div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+
+<div id="goog-gt-tt" class="skiptranslate" dir="ltr"><div style="padding: 8px;"><div><div class="logo"><img src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/translate_24dp.png" width="20" height="20" alt="Google 翻譯"></div></div></div><div class="top" style="padding: 8px; float: left; width: 100%;"><h1 class="title gray">原文</h1></div><div class="middle" style="padding: 8px;"><div class="original-text"></div></div><div class="bottom" style="padding: 8px;"><div class="activity-links"><span class="activity-link">建議更好的譯法</span><span class="activity-link"></span></div><div class="started-activity-container"><hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;"><div class="activity-root"></div></div></div><div class="status-message" style="display: none;"></div></div><iframe id="google_osd_static_frame_8515950993011" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;" src="./Opencv探索之路（二十）：製作一個簡易手動圖像配準工具- Madcola - 博客園_files/saved_resource(2).html"></iframe><div class="goog-te-spinner-pos"><div class="goog-te-spinner-animation"><svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px" height="96px" viewBox="0 0 66 66"><circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle></svg></div></div></body></html>

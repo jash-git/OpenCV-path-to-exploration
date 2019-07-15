@@ -20,5 +20,20 @@
 	OpenCV探索之路（二十四）圖像拼接和圖像融合技術
 		-https://www.cnblogs.com/skyfsm/p/7411961.html
 		-方法種類:SURF、ORB、stitch
+
+	OpenCV探索之路（二十三）：特徵檢測和特徵匹配方法彙總	
+		-https://www.cnblogs.com/skyfsm/p/7401523.html
+		-方法種類:SURF、SIFT、ORB、FAST、Harris
+	
+	OpenCV探索之路（二十二）：製作一個類“全能掃描王”的簡易掃描軟件
+		-https://www.cnblogs.com/skyfsm/p/7324346.html
+		-https://github.com/AstarLight/my_scanner
+		-偵測四邊形的頂點，並執行影像校正
+	
+	OpenCV探索之路（二十一）如何生成能在無opencv環境下運行的exe
+		-https://www.cnblogs.com/skyfsm/p/7263773.html
+		
+	Opencv探索之路（二十）：製作一個簡易手動圖像配準工具
+		-https://www.cnblogs.com/skyfsm/p/7253208.html
 	
 	
