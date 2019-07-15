@@ -83,5 +83,18 @@
 	OpenCV探索之路（五）：圖片縮放和圖像金字塔
 		-https://www.cnblogs.com/skyfsm/p/6876732.html
 	
+	OpenCV探索之路（四）：膨脹、腐蝕、開閉運算
+		-https://www.cnblogs.com/skyfsm/p/6874274.html
+	
+	OpenCV探索之路（三）：濾波操作
+		-https://www.cnblogs.com/skyfsm/p/6873188.html
+		-方法種類:方框濾波、均值濾波、高斯濾波、中值濾波、雙邊濾波
+	
+	OpenCV探索之路（二）：圖像處理的基礎知識點串燒
+		-https://www.cnblogs.com/skyfsm/p/6872648.html
+
+	OpenCV探索之路（一）：win10 X64+VS2015+opencv3.10安裝教程
+		-https://www.cnblogs.com/skyfsm/p/6840202.html
+	
 	
 	
